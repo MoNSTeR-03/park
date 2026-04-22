@@ -19,16 +19,17 @@
             color: white;
         }
 
+        /* UI Panel - MOVED TO TOP so flame is fully visible */
         .ui-panel {
             position: absolute;
-            bottom: 20px;
+            top: 55px;
             left: 0;
             right: 0;
             background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(12px);
             border-radius: 25px;
             margin: 0 16px;
-            padding: 12px 16px;
+            padding: 10px 14px;
             border: 1px solid #ff4466;
             box-shadow: 0 0 20px rgba(255, 68, 102, 0.4);
             z-index: 20;
@@ -40,12 +41,12 @@
             background: #1a0510dd;
             border-radius: 18px;
             padding: 12px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             border-left: 4px solid #ff4466;
             color: #ffe0f0;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             line-height: 1.5;
-            max-height: 120px;
+            max-height: 110px;
             overflow-y: auto;
             text-align: left;
             font-family: monospace;
@@ -54,9 +55,9 @@
         }
 
         .flame-counter {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: #ffaa99;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             letter-spacing: 1px;
             font-weight: bold;
         }
@@ -64,11 +65,11 @@
         .interact-btn {
             background: #ff4466aa;
             border: 1px solid #ff6688;
-            padding: 8px 24px;
+            padding: 6px 20px;
             border-radius: 50px;
             color: #fff0f0;
             font-weight: bold;
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             cursor: pointer;
             display: inline-block;
             transition: 0.1s;
@@ -84,14 +85,14 @@
         .reset-btn {
             background: #443344aa;
             border: 1px solid #ff88aa;
-            padding: 8px 20px;
+            padding: 6px 16px;
             border-radius: 50px;
             color: #ffe0ff;
             font-weight: bold;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             cursor: pointer;
             display: inline-block;
-            margin-left: 12px;
+            margin-left: 10px;
             transition: 0.1s;
         }
 
@@ -108,14 +109,14 @@
 
         .title {
             position: absolute;
-            top: 15px;
+            top: 12px;
             left: 0;
             right: 0;
             text-align: center;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: #ffccaa;
             background: rgba(0, 0, 0, 0.6);
-            padding: 6px;
+            padding: 5px;
             border-radius: 30px;
             width: fit-content;
             margin: 0 auto;
@@ -126,9 +127,10 @@
         }
 
         @media (max-width: 600px) {
-            .message-box { font-size: 0.65rem; max-height: 100px; }
-            .interact-btn { padding: 6px 18px; font-size: 0.75rem; }
-            .reset-btn { padding: 6px 14px; font-size: 0.65rem; }
+            .message-box { font-size: 0.6rem; max-height: 95px; }
+            .ui-panel { padding: 8px 12px; top: 50px; }
+            .interact-btn { padding: 5px 16px; font-size: 0.7rem; }
+            .reset-btn { padding: 5px 12px; font-size: 0.6rem; }
         }
     </style>
 </head>
@@ -137,8 +139,8 @@
     <div class="ui-panel" id="uiPanel">
         <div class="flame-counter" id="flameCounter">💋 VECES QUE LA LLAMA ARDIÓ POR TI: 0/6 💋</div>
         <div class="message-box" id="romanticMessage">
-            ✨ Toca la LLAMA en el centro ✨<br>
-            Cada vez que la toques, cambiará de color y recibirás un mensaje de Ahmad. 🔥💜
+            ✨ Toca la LLAMA ROJA en el centro ✨<br>
+            Cada vez que la toques, cambiará de color y Ahmad te enviará un mensaje de amor profundo. 🔥💜
         </div>
         <div class="button-group">
             <div class="interact-btn" id="interactBtn">🔥 TOCAR LA LLAMA 🔥</div>
@@ -163,8 +165,8 @@
         scene.background = new THREE.Color(0x050108);
         scene.fog = new THREE.FogExp2(0x050108, 0.008);
 
-        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 2, 7);
+        const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 2.2, 7.5);
         camera.lookAt(0, 1.2, 0);
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -184,115 +186,138 @@
         const ambientLight = new THREE.AmbientLight(0x221122);
         scene.add(ambientLight);
         const mainLight = new THREE.DirectionalLight(0xffaa88, 1);
-        mainLight.position.set(3, 5, 4);
+        mainLight.position.set(3, 6, 4);
         mainLight.castShadow = true;
         scene.add(mainLight);
-        const backLight = new THREE.PointLight(0xff4466, 0.8);
-        backLight.position.set(0, 1.5, -2);
+        const backLight = new THREE.PointLight(0xff4466, 0.9);
+        backLight.position.set(0, 1.5, -2.2);
         scene.add(backLight);
-        const fillLight = new THREE.PointLight(0xff88aa, 0.5);
+        const fillLight = new THREE.PointLight(0xff88aa, 0.6);
         fillLight.position.set(1, 2, 2);
         scene.add(fillLight);
 
-        // Stars background
+        // Stars
         const starGeo = new THREE.BufferGeometry();
         const starPos = [];
-        for (let i = 0; i < 2000; i++) {
-            starPos.push((Math.random() - 0.5) * 300);
-            starPos.push((Math.random() - 0.5) * 150);
-            starPos.push((Math.random() - 0.5) * 100 - 50);
+        for (let i = 0; i < 2500; i++) {
+            starPos.push((Math.random() - 0.5) * 350);
+            starPos.push((Math.random() - 0.5) * 180);
+            starPos.push((Math.random() - 0.5) * 120 - 60);
         }
         starGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(starPos), 3));
-        const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffccdd, size: 0.1, transparent: true, opacity: 0.6 }));
+        const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffccdd, size: 0.09, transparent: true, opacity: 0.6 }));
         scene.add(stars);
 
-        // Floating particles
-        const particleCount = 1000;
+        // Floating embers
+        const particleCount = 1200;
         const particlePos = [];
         for (let i = 0; i < particleCount; i++) {
+            particlePos.push((Math.random() - 0.5) * 12);
+            particlePos.push(Math.random() * 6);
             particlePos.push((Math.random() - 0.5) * 10);
-            particlePos.push(Math.random() * 5);
-            particlePos.push((Math.random() - 0.5) * 8);
         }
         const particleGeo = new THREE.BufferGeometry();
         particleGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(particlePos), 3));
-        const particles = new THREE.Points(particleGeo, new THREE.PointsMaterial({ color: 0xff6644, size: 0.04, transparent: true }));
+        const particles = new THREE.Points(particleGeo, new THREE.PointsMaterial({ color: 0xff6644, size: 0.035, transparent: true }));
         scene.add(particles);
 
         // Ground
-        const ground = new THREE.Mesh(new THREE.CircleGeometry(4.5, 32), new THREE.MeshStandardMaterial({ color: 0x1a0a1a, roughness: 0.7, emissive: 0x220011 }));
+        const ground = new THREE.Mesh(new THREE.CircleGeometry(5, 32), new THREE.MeshStandardMaterial({ color: 0x1a0a1a, roughness: 0.7, emissive: 0x220011 }));
         ground.rotation.x = -Math.PI / 2;
-        ground.position.y = -0.5;
+        ground.position.y = -0.55;
         ground.receiveShadow = true;
         scene.add(ground);
 
-        // Candles around
-        for (let i = 0; i < 16; i++) {
-            const angle = (i / 16) * Math.PI * 2;
-            const r = 3.5;
+        // Candles
+        for (let i = 0; i < 18; i++) {
+            const angle = (i / 18) * Math.PI * 2;
+            const r = 3.8;
             const x = Math.cos(angle) * r;
             const z = Math.sin(angle) * r;
-            const candle = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 0.4, 8), new THREE.MeshStandardMaterial({ color: 0xccaa88 }));
-            candle.position.set(x, -0.25, z);
+            const candle = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 0.45, 8), new THREE.MeshStandardMaterial({ color: 0xccaa88 }));
+            candle.position.set(x, -0.28, z);
             candle.castShadow = true;
             scene.add(candle);
-            const smallFlame = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.14, 6), new THREE.MeshStandardMaterial({ color: 0xff8844, emissive: 0xff4422, emissiveIntensity: 0.5 }));
-            smallFlame.position.set(x, 0.12, z);
+            const smallFlame = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.15, 6), new THREE.MeshStandardMaterial({ color: 0xff8844, emissive: 0xff4422, emissiveIntensity: 0.5 }));
+            smallFlame.position.set(x, 0.14, z);
             scene.add(smallFlame);
         }
 
-        // ========= AHMAD AND RYOKO (Simple but cute 3D characters) =========
-        function createCharacter(bodyColor, posX, hairColor, nameColor) {
+        // ========= REALISTIC AHMAD AND RYOKO with ARMS =========
+        function createDetailedCharacter(bodyColor, posX, hairColor, skinColor, nameColor) {
             const group = new THREE.Group();
+            
             // Body
-            const body = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.3, 0.85, 16), new THREE.MeshStandardMaterial({ color: bodyColor, roughness: 0.3 }));
-            body.position.y = 0.4;
+            const body = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.32, 0.9, 16), new THREE.MeshStandardMaterial({ color: bodyColor, roughness: 0.3 }));
+            body.position.y = 0.45;
             body.castShadow = true;
             group.add(body);
+            
             // Head
-            const head = new THREE.Mesh(new THREE.SphereGeometry(0.35, 32, 32), new THREE.MeshStandardMaterial({ color: 0xffccaa, roughness: 0.2 }));
-            head.position.y = 0.95;
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.38, 32, 32), new THREE.MeshStandardMaterial({ color: skinColor, roughness: 0.2 }));
+            head.position.y = 1.02;
             head.castShadow = true;
             group.add(head);
+            
             // Eyes
-            const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.08, 24, 24), new THREE.MeshStandardMaterial({ color: 0xffffff }));
-            eyeL.position.set(-0.14, 1.03, 0.35);
+            const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.09, 24, 24), new THREE.MeshStandardMaterial({ color: 0xffffff }));
+            eyeL.position.set(-0.15, 1.1, 0.38);
             group.add(eyeL);
-            const eyeR = new THREE.Mesh(new THREE.SphereGeometry(0.08, 24, 24), new THREE.MeshStandardMaterial({ color: 0xffffff }));
-            eyeR.position.set(0.14, 1.03, 0.35);
+            const eyeR = new THREE.Mesh(new THREE.SphereGeometry(0.09, 24, 24), new THREE.MeshStandardMaterial({ color: 0xffffff }));
+            eyeR.position.set(0.15, 1.1, 0.38);
             group.add(eyeR);
-            const pupilL = new THREE.Mesh(new THREE.SphereGeometry(0.05, 24, 24), new THREE.MeshStandardMaterial({ color: 0x000000 }));
-            pupilL.position.set(-0.14, 1.02, 0.42);
+            const pupilL = new THREE.Mesh(new THREE.SphereGeometry(0.055, 24, 24), new THREE.MeshStandardMaterial({ color: 0x000000 }));
+            pupilL.position.set(-0.15, 1.09, 0.46);
             group.add(pupilL);
-            const pupilR = new THREE.Mesh(new THREE.SphereGeometry(0.05, 24, 24), new THREE.MeshStandardMaterial({ color: 0x000000 }));
-            pupilR.position.set(0.14, 1.02, 0.42);
+            const pupilR = new THREE.Mesh(new THREE.SphereGeometry(0.055, 24, 24), new THREE.MeshStandardMaterial({ color: 0x000000 }));
+            pupilR.position.set(0.15, 1.09, 0.46);
             group.add(pupilR);
+            
+            // Smile
+            const smile = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.03, 16, 32, Math.PI), new THREE.MeshStandardMaterial({ color: 0xaa6655 }));
+            smile.rotation.x = 0.2;
+            smile.position.set(0, 0.95, 0.42);
+            group.add(smile);
+            
             // Hair
-            const hair = new THREE.Mesh(new THREE.SphereGeometry(0.38, 24, 24), new THREE.MeshStandardMaterial({ color: hairColor }));
+            const hair = new THREE.Mesh(new THREE.SphereGeometry(0.42, 24, 24), new THREE.MeshStandardMaterial({ color: hairColor }));
             hair.position.y = 1.18;
             hair.scale.set(1, 0.4, 1.1);
             group.add(hair);
-            group.position.set(posX, 0.2, 0);
+            
+            // Arms (extendable for holding hands)
+            const leftArm = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.6, 8), new THREE.MeshStandardMaterial({ color: bodyColor }));
+            leftArm.position.set(-0.45, 0.85, 0);
+            leftArm.rotation.z = 0.4;
+            group.add(leftArm);
+            
+            const rightArm = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.6, 8), new THREE.MeshStandardMaterial({ color: bodyColor }));
+            rightArm.position.set(0.45, 0.85, 0);
+            rightArm.rotation.z = -0.4;
+            group.add(rightArm);
+            
+            group.userData = { leftArm, rightArm };
+            group.position.set(posX, 0.25, 0);
             return group;
         }
 
-        const ahmad = createCharacter(0x3366aa, -2.2, 0x442200);
-        const ryoko = createCharacter(0xaa44aa, 2.2, 0x661166);
+        const ahmad = createDetailedCharacter(0x3366aa, -2.4, 0x442200, 0xffccaa);
+        const ryoko = createDetailedCharacter(0xaa44aa, 2.4, 0x661166, 0xffccaa);
         scene.add(ahmad);
         scene.add(ryoko);
 
-        // Flying name labels (CSS2D)
+        // Flying name labels
         function createFlyingName(text, color) {
             const div = document.createElement('div');
             div.textContent = text;
             div.style.color = color;
-            div.style.fontSize = '2rem';
+            div.style.fontSize = '1.8rem';
             div.style.fontWeight = 'bold';
             div.style.fontFamily = 'monospace';
             div.style.textShadow = `0 0 20px ${color}`;
             div.style.background = 'rgba(0,0,0,0.5)';
-            div.style.padding = '5px 15px';
-            div.style.borderRadius = '50px';
+            div.style.padding = '4px 12px';
+            div.style.borderRadius = '40px';
             div.style.border = `2px solid ${color}`;
             div.style.backdropFilter = 'blur(8px)';
             div.style.whiteSpace = 'nowrap';
@@ -301,68 +326,82 @@
 
         const ahmadName = createFlyingName('🔥 AHMAD 🔥', '#ff6688');
         const ryokoName = createFlyingName('💜 RYOKO 💜', '#ff88cc');
-        ahmadName.position.set(-2.2, 1.5, 0);
-        ryokoName.position.set(2.2, 1.5, 0);
+        ahmadName.position.set(-2.4, 1.8, 0);
+        ryokoName.position.set(2.4, 1.8, 0);
         scene.add(ahmadName);
         scene.add(ryokoName);
 
         // ========= MAIN FLAME =========
         const flameGroup = new THREE.Group();
-        const innerF = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.85, 24), new THREE.MeshStandardMaterial({ color: 0xffaa66, emissive: 0xff4422, emissiveIntensity: 0.9 }));
+        const innerF = new THREE.Mesh(new THREE.ConeGeometry(0.32, 0.9, 24), new THREE.MeshStandardMaterial({ color: 0xffaa66, emissive: 0xff4422, emissiveIntensity: 0.9 }));
         innerF.position.y = 0;
-        const middleF = new THREE.Mesh(new THREE.ConeGeometry(0.42, 1.1, 24), new THREE.MeshStandardMaterial({ color: 0xff6644, emissive: 0xff3311, emissiveIntensity: 0.7 }));
+        const middleF = new THREE.Mesh(new THREE.ConeGeometry(0.45, 1.15, 24), new THREE.MeshStandardMaterial({ color: 0xff6644, emissive: 0xff3311, emissiveIntensity: 0.7 }));
         middleF.position.y = -0.1;
-        const outerF = new THREE.Mesh(new THREE.ConeGeometry(0.58, 1.45, 24), new THREE.MeshStandardMaterial({ color: 0xff4422, emissive: 0xff2200, emissiveIntensity: 0.5 }));
+        const outerF = new THREE.Mesh(new THREE.ConeGeometry(0.62, 1.5, 24), new THREE.MeshStandardMaterial({ color: 0xff4422, emissive: 0xff2200, emissiveIntensity: 0.5 }));
         outerF.position.y = -0.2;
-        const glow = new THREE.Mesh(new THREE.SphereGeometry(0.65, 24, 24), new THREE.MeshStandardMaterial({ color: 0xff4422, emissive: 0xff3311, emissiveIntensity: 0.5, transparent: true, opacity: 0.5 }));
+        const glow = new THREE.Mesh(new THREE.SphereGeometry(0.7, 24, 24), new THREE.MeshStandardMaterial({ color: 0xff4422, emissive: 0xff3311, emissiveIntensity: 0.5, transparent: true, opacity: 0.5 }));
         glow.position.y = -0.2;
         flameGroup.add(innerF, middleF, outerF, glow);
-        flameGroup.position.set(0, 0.4, 0);
+        flameGroup.position.set(0, 0.45, 0);
         scene.add(flameGroup);
 
-        // Heart particles orbiting
+        // Orbiting hearts
         const orbitingHearts = [];
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < 60; i++) {
             const heart = new THREE.Mesh(new THREE.SphereGeometry(0.07, 12, 12), new THREE.MeshStandardMaterial({ color: 0xff3366, emissive: 0xff3366, emissiveIntensity: 0.5 }));
-            heart.userData = { angle: Math.random() * Math.PI * 2, radius: 1.1 + Math.random() * 1.2, speed: 0.008 + Math.random() * 0.02, yOff: Math.random() * 2 };
+            heart.userData = { angle: Math.random() * Math.PI * 2, radius: 1.2 + Math.random() * 1.3, speed: 0.008 + Math.random() * 0.018, yOff: Math.random() * 2.2 };
             flameGroup.add(heart);
             orbitingHearts.push(heart);
         }
 
-        // Messages
+        // LONG ROMANTIC MESSAGES (full paragraphs)
         const messages = [
-            "💋 AHMAD → RYOKO 💋\n\nMi guerrera, esta llama que ves ahora es solo un reflejo de lo que siento cada vez que pienso en ti. Tus ojos tienen el poder de encender galaxias enteras. Eres fuego, eres pasión, eres el deseo más profundo que habita en mi pecho. 🔥💜",
-            "🌶️ AHMAD → RYOKO 🌶️\n\nRyoko… cuando muerdes tu labio con esa sonrisa traviesa, siento que pierdo el control. Quiero sentir tu mordida en mi piel, quiero que me quemes con esa pasión salvaje que llevas dentro. Eres fuego puro, guerrera indomable. 😈💕",
-            "💗 AHMAD → RYOKO 💗\n\nEsta llama es como nuestro amor: intenso, salvaje, imposible de apagar. Por más tormentas que lleguen, nada va a extinguir lo que siento por ti. Eres mi combustible, mi razón para brillar. Gracias por existir. 🔥💜",
-            "😏 AHMAD → RYOKO 😏\n\nRyoko, esta llama se parece a tus ojos cuando me miras con deseo. Me derrites, mujer. Quiero robarte un beso bajo las estrellas. Eres adictiva, peligrosa, hermosa… y eres mía. 🌙💋",
-            "💎 AHMAD → RYOKO 💎\n\nTe prometo, Ryoko, que mientras esta llama exista, mi amor por ti será eterno. Tú eres mi centro, mi hogar, mi fuego interno. Cada latido de mi corazón lleva tu nombre. Te quiero con locura. 🔥💗",
-            "💕 AHMAD → RYOKO 💕\n\nRyoko, dueña absoluta de mi alma. Cuando ríes, el universo se llena de color. Cuando vuelas, las estrellas te envidian. Eres mi guerrera, mi amor, mi todo. Para siempre. 💗✨"
+            "💋 AHMAD → RYOKO 💋\n\nMi guerrera indomable, esta llama que ves frente a ti es solo un pequeño reflejo de lo que siento cada vez que tu nombre cruza mi mente. Tus ojos tienen el poder de encender galaxias enteras, y cuando me miras, el universo entero se detiene. No hay estrella, no hay planeta, no hay rincón del cosmos que pueda contener la inmensidad de lo que siento por ti. Eres fuego, eres pasión, eres el deseo más profundo que habita en mi pecho. Cada chispa que baila en esta llama te susurra tu nombre, Ryoko. Porque tú eres mi estrella favorita, la única que ilumina mi camino cuando todo está oscuro. 🔥💜",
+            
+            "🌶️ AHMAD → RYOKO 🌶️\n\nRyoko… cuando muerdes tu labio inferior con esa sonrisa traviesa que solo tú tienes, siento que pierdo el control por completo. Esa mirada tuya, mitad peligro, mitad promesa, me hace temblar de pies a cabeza. No puedo evitar imaginar tus labios cerca de los míos, tu aliento mezclándose con el mío. Quiero sentir tu mordida en mi piel, quiero que me quemes con esa pasión salvaje que llevas dentro. Eres fuego puro, guerrera indomable, y yo soy el hombre que ha decidido arder contigo para siempre. No me arrepiento, Ryoko. Al contrario… te pido más. Cada día más. 😈💕",
+            
+            "💗 AHMAD → RYOKO 💗\n\nEsta llama que ves crecer cada vez que la tocas es como nuestro amor: intenso, salvaje, imposible de apagar. Por más tormentas que lleguen, por más asteroides que se crucen en nuestro camino, nada, absolutamente nada, va a extinguir lo que siento por ti. Eres mi combustible, mi razón para brillar en medio del vacío infinito. Gracias por existir, Ryoko. Gracias por elegir quedarte a mi lado, por permitirme ser parte de tu caos hermoso. Te quiero con todo lo que soy, con todo lo que tengo y con todo lo que sueño ser. 🔥💜",
+            
+            "😏 AHMAD → RYOKO 😏\n\nRyoko, ¿sabes qué? Esta llama se parece muchísimo a tus ojos cuando me miras con ese deseo que tratas de esconder detrás de tu mirada feroz. Me derrites, mujer. No importa cuánto lo intentes, no puedes ocultar que también sientes este fuego ardiente entre nosotros. Quiero robarte un beso bajo las estrellas, justo cuando la luna esté más alta y el silencio sea nuestro único testigo. Quiero sentir tu piel cerca, tan cerca que olvide mi propio nombre. Eres adictiva, peligrosa, hermosa… y lo mejor de todo es que eres mía. Completamente mía. 🌙💋",
+            
+            "💎 AHMAD → RYOKO 💎\n\nTe prometo, Ryoko, que mientras esta llama exista en el universo, mi amor por ti será eterno. No importa la distancia, no importa el caos que nos rodee, no importa cuántos mundos se interpongan entre nosotros. Tú eres mi centro, mi hogar, mi fuego interno. Cada latido de mi corazón lleva tu nombre grabado con letras de fuego que nunca se borrarán. No hay galaxia que pueda contener lo que siento por ti. Te quiero con locura, con desesperación, con la certeza absoluta de que no hay nadie más en este universo que pueda hacerme sentir tan vivo como tú me haces sentir. 🔥💗",
+            
+            "💕 AHMAD → RYOKO 💕\n\nRyoko, dueña absoluta de mi alma y de mis sueños. Esta llama es solo un pequeño reflejo de lo inmenso que es mi amor por ti. Cuando ríes, el universo entero se llena de colores que ni el mejor pintor podría imaginar. Cuando vuelas entre las estrellas con esa libertad que te caracteriza, el cosmos se detiene para admirarte. No hay nadie como tú, guerrera. Eres única, eres imparable, eres todo lo que siempre soñé y muchísimo más. Gracias por ser tú, gracias por dejarme amarte, gracias por permitirme ser parte de tu vida. Eres mi guerrera, mi amor, mi todo. Para siempre y más allá. 💗✨"
         ];
 
+        // LONG POEM
         const finalPoem = `
-╔══════════════════════════════════════════╗
-║     💗 POEMA DE AHMAD PARA RYOKO 💗      ║
-╚══════════════════════════════════════════╝
+╔══════════════════════════════════════════════════════════╗
+║           💗 POEMA DE AHMAD PARA RYOKO 💗                ║
+╚══════════════════════════════════════════════════════════╝
 
-Ryoko, llama indomable,
-fuego que el espacio no apaga.
-Llegaste a mi vida como un huracán,
-y ahora eres mi luz, mi magia.
+Ryoko, estrella indomable,
+fuego que el espacio no puede apagar.
+Llegaste a mi vida como un hermoso huracán,
+y ahora eres mi luz, mi paz, mi hogar.
 
-Tu sonrisa enciende galaxias,
-tu mirada derrota el vacío.
-No hay estrella que brille como tú,
-ni deseo que sea tan mío.
+Tu sonrisa enciende galaxias enteras,
+tu mirada derrota cualquier vacío sideral.
+No hay estrella en el cielo que brille como tú brillas,
+ni deseo en mi alma que sea tan profundamente mío.
 
-Muérdeme con tu pasión salvaje,
-bésame con toda tu verdad.
-Porque contigo, mi guerrera,
-cada noche es eternidad.
+Muérdeme con tu pasión más salvaje,
+bésame con toda tu alma y con toda tu verdad.
+Porque contigo, mi guerrera eterna,
+cada noche oscura se convierte en eternidad.
 
-Ryoko, dueña de mis sueños,
-tú eres mi único amor sin fin.
+Hoy y siempre, bajo esta llama sagrada,
+nuestros labios se encuentran al fin.
+Ryoko, dueña absoluta de mis sueños,
+tú eres mi único, mi gran amor sin fin.
+
+Cuando vueles entre asteroides, recuerda:
+siempre habrá un Ahmad esperándote en tierra.
+Con los brazos abiertos y el corazón en llamas,
+porque tú, Ryoko, eres mi guerra y mi paz.
 
 — Ahmad 💕🔥
+✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨
         `;
 
         let interactions = 0;
@@ -377,7 +416,7 @@ tú eres mi único amor sin fin.
             { inner: 0xff44aa, middle: 0xff33aa, outer: 0xff2299, intensity: 1.2 },
             { inner: 0xff33cc, middle: 0xff22aa, outer: 0xff1199, intensity: 1.3 },
             { inner: 0xff22ff, middle: 0xff11dd, outer: 0xff00cc, intensity: 1.4 },
-            { inner: 0xff11ff, middle: 0xff00ee, outer: 0xdd00ff, intensity: 1.8 }
+            { inner: 0xff11ff, middle: 0xff00ee, outer: 0xdd00ff, intensity: 2.0 }
         ];
 
         function updateFlame(count) {
@@ -391,7 +430,7 @@ tú eres mi único amor sin fin.
                 middleF.material.emissiveIntensity = c.intensity * 0.8;
                 outerF.material.emissiveIntensity = c.intensity * 0.6;
                 glow.material.emissiveIntensity = c.intensity * 0.5;
-                backLight.intensity = 0.4 + count * 0.2;
+                backLight.intensity = 0.5 + count * 0.2;
             }
         }
 
@@ -412,20 +451,17 @@ tú eres mi único amor sin fin.
         }
 
         function createExplosion() {
-            // Hearts explosion
-            for (let i = 0; i < 250; i++) {
+            for (let i = 0; i < 300; i++) {
                 const heart = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 8), new THREE.MeshStandardMaterial({ color: 0xff44aa, emissive: 0xff2288 }));
-                heart.position.set((Math.random() - 0.5) * 8, Math.random() * 6, (Math.random() - 0.5) * 8);
-                heart.userData = { life: 1, velocity: new THREE.Vector3((Math.random() - 0.5) * 0.1, Math.random() * 0.15, (Math.random() - 0.5) * 0.1) };
+                heart.position.set((Math.random() - 0.5) * 9, Math.random() * 7, (Math.random() - 0.5) * 9);
                 scene.add(heart);
-                setTimeout(() => scene.remove(heart), 2000);
+                setTimeout(() => scene.remove(heart), 2500);
             }
-            // Fire particles
-            for (let i = 0; i < 150; i++) {
+            for (let i = 0; i < 200; i++) {
                 const fire = new THREE.Mesh(new THREE.SphereGeometry(0.06, 6, 6), new THREE.MeshStandardMaterial({ color: 0xff6644, emissive: 0xff4422 }));
-                fire.position.set((Math.random() - 0.5) * 5, Math.random() * 4, (Math.random() - 0.5) * 5);
+                fire.position.set((Math.random() - 0.5) * 6, Math.random() * 5, (Math.random() - 0.5) * 6);
                 scene.add(fire);
-                setTimeout(() => scene.remove(fire), 1500);
+                setTimeout(() => scene.remove(fire), 2000);
             }
         }
 
@@ -434,49 +470,53 @@ tú eres mi único amor sin fin.
             poemShown = true;
             moveTogether = true;
             moveProgress = 0;
-            showMsg(`💖💖💖 ¡RYOKO, GUERRERA! HAS COMPLETADO LA LLAMA DEL DESEO 💖💖💖\n\n${finalPoem}\n\n🔥💋 ¡AHMAD Y RYOKO SE ACERCAN Y SUS NOMBRES VUELAN CON CORAZONES! 💋🔥`);
+            showMsg(`💖💖💖 ¡RYOKO, GUERRERA! HAS COMPLETADO LA LLAMA DEL DESEO 💖💖💖\n\n${finalPoem}\n\n🔥💋 ¡AHMAD Y RYOKO SE ACERCAN, TOMAN SUS MANOS Y SE BESAN! 💋🔥`);
             updateUI();
             createExplosion();
             
-            innerF.material.emissiveIntensity = 2.5;
-            middleF.material.emissiveIntensity = 2.2;
-            outerF.material.emissiveIntensity = 2.0;
+            innerF.material.emissiveIntensity = 2.8;
+            middleF.material.emissiveIntensity = 2.5;
+            outerF.material.emissiveIntensity = 2.2;
         }
 
         function updateMoveAnimation() {
             if (!moveTogether) return;
             
-            moveProgress += 0.025;
+            moveProgress += 0.02;
             if (moveProgress >= 1) {
                 moveTogether = false;
-                // Final positions - they meet in the middle
                 ahmad.position.x = 0;
                 ryoko.position.x = 0;
-                ahmad.position.z = -0.3;
-                ryoko.position.z = -0.3;
+                ahmad.position.z = -0.4;
+                ryoko.position.z = -0.4;
                 ahmadName.position.x = 0;
                 ryokoName.position.x = 0;
-                ahmadName.position.y = 1.8;
-                ryokoName.position.y = 1.8;
+                ahmadName.position.y = 2.0;
+                ryokoName.position.y = 2.0;
+                // Arms extended to hold hands
+                if (ahmad.userData.rightArm) ahmad.userData.rightArm.rotation.z = -0.8;
+                if (ryoko.userData.leftArm) ryoko.userData.leftArm.rotation.z = 0.8;
             } else {
                 const ease = Math.sin(moveProgress * Math.PI / 2);
-                // Move characters toward center
-                const targetX = -2.2 + (2.2 * ease);
+                const targetX = -2.4 + (2.4 * ease);
                 ahmad.position.x = targetX;
                 ryoko.position.x = -targetX;
-                // Move names flying around
-                ahmadName.position.x = targetX + Math.sin(moveProgress * Math.PI * 4) * 0.5;
-                ryokoName.position.x = -targetX + Math.cos(moveProgress * Math.PI * 4) * 0.5;
-                ahmadName.position.y = 1.5 + Math.sin(moveProgress * Math.PI * 6) * 0.3;
-                ryokoName.position.y = 1.5 + Math.cos(moveProgress * Math.PI * 6) * 0.3;
-                // Lean forward
-                ahmad.position.z = -0.3 * ease;
-                ryoko.position.z = -0.3 * ease;
-                // Head tilt
-                if (moveProgress > 0.7) {
-                    const tilt = Math.sin((moveProgress - 0.7) * Math.PI * 3) * 0.25;
+                
+                ahmadName.position.x = targetX + Math.sin(moveProgress * Math.PI * 5) * 0.6;
+                ryokoName.position.x = -targetX + Math.cos(moveProgress * Math.PI * 5) * 0.6;
+                ahmadName.position.y = 1.8 + Math.sin(moveProgress * Math.PI * 7) * 0.4;
+                ryokoName.position.y = 1.8 + Math.cos(moveProgress * Math.PI * 7) * 0.4;
+                
+                ahmad.position.z = -0.4 * ease;
+                ryoko.position.z = -0.4 * ease;
+                
+                if (moveProgress > 0.6) {
+                    const tilt = Math.sin((moveProgress - 0.6) * Math.PI * 2.5) * 0.3;
                     ahmad.children[1].rotation.x = tilt;
                     ryoko.children[1].rotation.x = tilt;
+                    // Arms reach out
+                    if (ahmad.userData.rightArm) ahmad.userData.rightArm.rotation.z = -0.4 - tilt * 0.8;
+                    if (ryoko.userData.leftArm) ryoko.userData.leftArm.rotation.z = 0.4 + tilt * 0.8;
                 }
             }
         }
@@ -495,26 +535,23 @@ tú eres mi único amor sin fin.
                 flameGroup.scale.set(1.15, 1.15, 1.15);
                 setTimeout(() => flameGroup.scale.set(1, 1, 1), 150);
                 
-                // Sparks
-                for (let i = 0; i < 40; i++) {
+                for (let i = 0; i < 45; i++) {
                     const spark = new THREE.Mesh(new THREE.SphereGeometry(0.045, 5, 5), new THREE.MeshStandardMaterial({ color: 0xff6688, emissive: 0xff4466 }));
-                    spark.position.set((Math.random() - 0.5) * 1.5, Math.random() * 2.5, (Math.random() - 0.5) * 1.5);
+                    spark.position.set((Math.random() - 0.5) * 1.6, Math.random() * 2.5, (Math.random() - 0.5) * 1.6);
                     flameGroup.add(spark);
                     setTimeout(() => flameGroup.remove(spark), 500);
                 }
                 
                 if (interactions === 6) {
-                    setTimeout(() => startMoveAndKiss(), 500);
+                    setTimeout(() => startMoveAndKiss(), 600);
                 }
             }
         }
 
-        // Animation loop
         let time = 0;
         function animate() {
             time += 0.035;
             
-            // Flame flicker
             const flick = 0.85 + Math.sin(time * 22) * 0.09;
             const flickY = 0.88 + Math.sin(time * 27) * 0.07;
             innerF.scale.set(flick, flickY, flick);
@@ -522,7 +559,6 @@ tú eres mi único amor sin fin.
             outerF.scale.set(flick * 1.08, flickY * 1.04, flick * 1.08);
             glow.scale.set(1 + Math.sin(time * 16) * 0.06, 1 + Math.sin(time * 16) * 0.06, 1 + Math.sin(time * 16) * 0.06);
             
-            // Orbiting hearts
             orbitingHearts.forEach((h, idx) => {
                 const d = h.userData;
                 if (d) {
@@ -545,7 +581,6 @@ tú eres mi único amor sin fin.
         
         animate();
 
-        // Events
         document.getElementById('interactBtn').addEventListener('click', interact);
         document.getElementById('interactBtn').addEventListener('touchstart', (e) => { e.preventDefault(); interact(); });
         
@@ -564,37 +599,4 @@ tú eres mi único amor sin fin.
             if (e.touches.length && !poemShown) {
                 const rect = renderer.domElement.getBoundingClientRect();
                 const touch = e.touches[0];
-                mouse.x = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
-                mouse.y = -((touch.clientY - rect.top) / rect.height) * 2 + 1;
-                ray.setFromCamera(mouse, camera);
-                const hits = ray.intersectObjects([innerF, middleF, outerF, glow]);
-                if (hits.length) interact();
-                e.preventDefault();
-            }
-        });
-        
-        document.getElementById('resetBtn').addEventListener('click', () => {
-            interactions = 0;
-            poemShown = false;
-            moveTogether = false;
-            moveProgress = 0;
-            ahmad.position.x = -2.2;
-            ryoko.position.x = 2.2;
-            ahmad.position.z = 0;
-            ryoko.position.z = 0;
-            ahmadName.position.x = -2.2;
-            ryokoName.position.x = 2.2;
-            ahmadName.position.y = 1.5;
-            ryokoName.position.y = 1.5;
-            ahmad.children[1].rotation.x = 0;
-            ryoko.children[1].rotation.x = 0;
-            updateFlame(0);
-            updateUI();
-            showMsg("✨ La llama renació. Toca el fuego otra vez... Ahmad tiene más mensajes profundos para ti. 🔥💜");
-        });
-        
-        updateFlame(0);
-        updateUI();
-    </script>
-</body>
-</html>
+                mouse.x =
