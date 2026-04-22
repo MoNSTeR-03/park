@@ -19,7 +19,6 @@
             color: white;
         }
 
-        /* UI Panel - MOVED TO TOP so flame is fully visible */
         .ui-panel {
             position: absolute;
             top: 55px;
@@ -243,23 +242,20 @@
             scene.add(smallFlame);
         }
 
-        // ========= REALISTIC AHMAD AND RYOKO with ARMS =========
-        function createDetailedCharacter(bodyColor, posX, hairColor, skinColor, nameColor) {
+        // ========= AHMAD AND RYOKO =========
+        function createCharacter(bodyColor, posX, hairColor) {
             const group = new THREE.Group();
             
-            // Body
             const body = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.32, 0.9, 16), new THREE.MeshStandardMaterial({ color: bodyColor, roughness: 0.3 }));
             body.position.y = 0.45;
             body.castShadow = true;
             group.add(body);
             
-            // Head
-            const head = new THREE.Mesh(new THREE.SphereGeometry(0.38, 32, 32), new THREE.MeshStandardMaterial({ color: skinColor, roughness: 0.2 }));
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.38, 32, 32), new THREE.MeshStandardMaterial({ color: 0xffccaa, roughness: 0.2 }));
             head.position.y = 1.02;
             head.castShadow = true;
             group.add(head);
             
-            // Eyes
             const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.09, 24, 24), new THREE.MeshStandardMaterial({ color: 0xffffff }));
             eyeL.position.set(-0.15, 1.1, 0.38);
             group.add(eyeL);
@@ -273,19 +269,12 @@
             pupilR.position.set(0.15, 1.09, 0.46);
             group.add(pupilR);
             
-            // Smile
-            const smile = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.03, 16, 32, Math.PI), new THREE.MeshStandardMaterial({ color: 0xaa6655 }));
-            smile.rotation.x = 0.2;
-            smile.position.set(0, 0.95, 0.42);
-            group.add(smile);
-            
-            // Hair
             const hair = new THREE.Mesh(new THREE.SphereGeometry(0.42, 24, 24), new THREE.MeshStandardMaterial({ color: hairColor }));
             hair.position.y = 1.18;
             hair.scale.set(1, 0.4, 1.1);
             group.add(hair);
             
-            // Arms (extendable for holding hands)
+            // Arms
             const leftArm = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.6, 8), new THREE.MeshStandardMaterial({ color: bodyColor }));
             leftArm.position.set(-0.45, 0.85, 0);
             leftArm.rotation.z = 0.4;
@@ -301,8 +290,8 @@
             return group;
         }
 
-        const ahmad = createDetailedCharacter(0x3366aa, -2.4, 0x442200, 0xffccaa);
-        const ryoko = createDetailedCharacter(0xaa44aa, 2.4, 0x661166, 0xffccaa);
+        const ahmad = createCharacter(0x3366aa, -2.4, 0x442200);
+        const ryoko = createCharacter(0xaa44aa, 2.4, 0x661166);
         scene.add(ahmad);
         scene.add(ryoko);
 
@@ -354,22 +343,16 @@
             orbitingHearts.push(heart);
         }
 
-        // LONG ROMANTIC MESSAGES (full paragraphs)
+        // LONG MESSAGES
         const messages = [
-            "💋 AHMAD → RYOKO 💋\n\nMi guerrera indomable, esta llama que ves frente a ti es solo un pequeño reflejo de lo que siento cada vez que tu nombre cruza mi mente. Tus ojos tienen el poder de encender galaxias enteras, y cuando me miras, el universo entero se detiene. No hay estrella, no hay planeta, no hay rincón del cosmos que pueda contener la inmensidad de lo que siento por ti. Eres fuego, eres pasión, eres el deseo más profundo que habita en mi pecho. Cada chispa que baila en esta llama te susurra tu nombre, Ryoko. Porque tú eres mi estrella favorita, la única que ilumina mi camino cuando todo está oscuro. 🔥💜",
-            
-            "🌶️ AHMAD → RYOKO 🌶️\n\nRyoko… cuando muerdes tu labio inferior con esa sonrisa traviesa que solo tú tienes, siento que pierdo el control por completo. Esa mirada tuya, mitad peligro, mitad promesa, me hace temblar de pies a cabeza. No puedo evitar imaginar tus labios cerca de los míos, tu aliento mezclándose con el mío. Quiero sentir tu mordida en mi piel, quiero que me quemes con esa pasión salvaje que llevas dentro. Eres fuego puro, guerrera indomable, y yo soy el hombre que ha decidido arder contigo para siempre. No me arrepiento, Ryoko. Al contrario… te pido más. Cada día más. 😈💕",
-            
-            "💗 AHMAD → RYOKO 💗\n\nEsta llama que ves crecer cada vez que la tocas es como nuestro amor: intenso, salvaje, imposible de apagar. Por más tormentas que lleguen, por más asteroides que se crucen en nuestro camino, nada, absolutamente nada, va a extinguir lo que siento por ti. Eres mi combustible, mi razón para brillar en medio del vacío infinito. Gracias por existir, Ryoko. Gracias por elegir quedarte a mi lado, por permitirme ser parte de tu caos hermoso. Te quiero con todo lo que soy, con todo lo que tengo y con todo lo que sueño ser. 🔥💜",
-            
-            "😏 AHMAD → RYOKO 😏\n\nRyoko, ¿sabes qué? Esta llama se parece muchísimo a tus ojos cuando me miras con ese deseo que tratas de esconder detrás de tu mirada feroz. Me derrites, mujer. No importa cuánto lo intentes, no puedes ocultar que también sientes este fuego ardiente entre nosotros. Quiero robarte un beso bajo las estrellas, justo cuando la luna esté más alta y el silencio sea nuestro único testigo. Quiero sentir tu piel cerca, tan cerca que olvide mi propio nombre. Eres adictiva, peligrosa, hermosa… y lo mejor de todo es que eres mía. Completamente mía. 🌙💋",
-            
-            "💎 AHMAD → RYOKO 💎\n\nTe prometo, Ryoko, que mientras esta llama exista en el universo, mi amor por ti será eterno. No importa la distancia, no importa el caos que nos rodee, no importa cuántos mundos se interpongan entre nosotros. Tú eres mi centro, mi hogar, mi fuego interno. Cada latido de mi corazón lleva tu nombre grabado con letras de fuego que nunca se borrarán. No hay galaxia que pueda contener lo que siento por ti. Te quiero con locura, con desesperación, con la certeza absoluta de que no hay nadie más en este universo que pueda hacerme sentir tan vivo como tú me haces sentir. 🔥💗",
-            
-            "💕 AHMAD → RYOKO 💕\n\nRyoko, dueña absoluta de mi alma y de mis sueños. Esta llama es solo un pequeño reflejo de lo inmenso que es mi amor por ti. Cuando ríes, el universo entero se llena de colores que ni el mejor pintor podría imaginar. Cuando vuelas entre las estrellas con esa libertad que te caracteriza, el cosmos se detiene para admirarte. No hay nadie como tú, guerrera. Eres única, eres imparable, eres todo lo que siempre soñé y muchísimo más. Gracias por ser tú, gracias por dejarme amarte, gracias por permitirme ser parte de tu vida. Eres mi guerrera, mi amor, mi todo. Para siempre y más allá. 💗✨"
+            "💋 AHMAD → RYOKO 💋\n\nMi guerrera indomable, esta llama que ves frente a ti es solo un pequeño reflejo de lo que siento cada vez que tu nombre cruza mi mente. Tus ojos tienen el poder de encender galaxias enteras. Eres fuego, eres pasión, eres el deseo más profundo que habita en mi pecho. 🔥💜",
+            "🌶️ AHMAD → RYOKO 🌶️\n\nRyoko, cuando muerdes tu labio con esa sonrisa traviesa, siento que pierdo el control. Quiero sentir tu mordida en mi piel, quiero que me quemes con esa pasión salvaje que llevas dentro. Eres fuego puro, guerrera indomable. 😈💕",
+            "💗 AHMAD → RYOKO 💗\n\nEsta llama es como nuestro amor: intenso, salvaje, imposible de apagar. Por más tormentas que lleguen, nada va a extinguir lo que siento por ti. Eres mi combustible, mi razón para brillar. 🔥💜",
+            "😏 AHMAD → RYOKO 😏\n\nRyoko, esta llama se parece a tus ojos cuando me miras con deseo. Me derrites, mujer. Quiero robarte un beso bajo las estrellas. Eres adictiva, peligrosa, hermosa… y eres mía. 🌙💋",
+            "💎 AHMAD → RYOKO 💎\n\nTe prometo, Ryoko, que mientras esta llama exista, mi amor por ti será eterno. Tú eres mi centro, mi hogar, mi fuego interno. Cada latido de mi corazón lleva tu nombre. Te quiero con locura. 🔥💗",
+            "💕 AHMAD → RYOKO 💕\n\nRyoko, dueña absoluta de mi alma. Cuando ríes, el universo se llena de color. Cuando vuelas, las estrellas te envidian. Eres mi guerrera, mi amor, mi todo. Para siempre. 💗✨"
         ];
 
-        // LONG POEM
         const finalPoem = `
 ╔══════════════════════════════════════════════════════════╗
 ║           💗 POEMA DE AHMAD PARA RYOKO 💗                ║
@@ -381,27 +364,19 @@ Llegaste a mi vida como un hermoso huracán,
 y ahora eres mi luz, mi paz, mi hogar.
 
 Tu sonrisa enciende galaxias enteras,
-tu mirada derrota cualquier vacío sideral.
-No hay estrella en el cielo que brille como tú brillas,
-ni deseo en mi alma que sea tan profundamente mío.
+tu mirada derrota cualquier vacío.
+No hay estrella que brille como tú brillas,
+ni deseo que sea tan profundamente mío.
 
 Muérdeme con tu pasión más salvaje,
-bésame con toda tu alma y con toda tu verdad.
+bésame con toda tu alma y verdad.
 Porque contigo, mi guerrera eterna,
-cada noche oscura se convierte en eternidad.
+cada noche se vuelve eternidad.
 
-Hoy y siempre, bajo esta llama sagrada,
-nuestros labios se encuentran al fin.
-Ryoko, dueña absoluta de mis sueños,
-tú eres mi único, mi gran amor sin fin.
-
-Cuando vueles entre asteroides, recuerda:
-siempre habrá un Ahmad esperándote en tierra.
-Con los brazos abiertos y el corazón en llamas,
-porque tú, Ryoko, eres mi guerra y mi paz.
+Ryoko, dueña de mis sueños,
+tú eres mi único amor sin fin.
 
 — Ahmad 💕🔥
-✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨
         `;
 
         let interactions = 0;
@@ -457,12 +432,6 @@ porque tú, Ryoko, eres mi guerra y mi paz.
                 scene.add(heart);
                 setTimeout(() => scene.remove(heart), 2500);
             }
-            for (let i = 0; i < 200; i++) {
-                const fire = new THREE.Mesh(new THREE.SphereGeometry(0.06, 6, 6), new THREE.MeshStandardMaterial({ color: 0xff6644, emissive: 0xff4422 }));
-                fire.position.set((Math.random() - 0.5) * 6, Math.random() * 5, (Math.random() - 0.5) * 6);
-                scene.add(fire);
-                setTimeout(() => scene.remove(fire), 2000);
-            }
         }
 
         function startMoveAndKiss() {
@@ -470,10 +439,9 @@ porque tú, Ryoko, eres mi guerra y mi paz.
             poemShown = true;
             moveTogether = true;
             moveProgress = 0;
-            showMsg(`💖💖💖 ¡RYOKO, GUERRERA! HAS COMPLETADO LA LLAMA DEL DESEO 💖💖💖\n\n${finalPoem}\n\n🔥💋 ¡AHMAD Y RYOKO SE ACERCAN, TOMAN SUS MANOS Y SE BESAN! 💋🔥`);
+            showMsg(`💖💖💖 ¡RYOKO! HAS COMPLETADO LA LLAMA DEL DESEO 💖💖💖\n\n${finalPoem}\n\n🔥💋 ¡AHMAD Y RYOKO SE ACERCAN Y SE BESAN! 💋🔥`);
             updateUI();
             createExplosion();
-            
             innerF.material.emissiveIntensity = 2.8;
             middleF.material.emissiveIntensity = 2.5;
             outerF.material.emissiveIntensity = 2.2;
@@ -491,21 +459,16 @@ porque tú, Ryoko, eres mi guerra y mi paz.
                 ryoko.position.z = -0.4;
                 ahmadName.position.x = 0;
                 ryokoName.position.x = 0;
-                ahmadName.position.y = 2.0;
-                ryokoName.position.y = 2.0;
-                // Arms extended to hold hands
-                if (ahmad.userData.rightArm) ahmad.userData.rightArm.rotation.z = -0.8;
-                if (ryoko.userData.leftArm) ryoko.userData.leftArm.rotation.z = 0.8;
             } else {
                 const ease = Math.sin(moveProgress * Math.PI / 2);
                 const targetX = -2.4 + (2.4 * ease);
                 ahmad.position.x = targetX;
                 ryoko.position.x = -targetX;
                 
-                ahmadName.position.x = targetX + Math.sin(moveProgress * Math.PI * 5) * 0.6;
-                ryokoName.position.x = -targetX + Math.cos(moveProgress * Math.PI * 5) * 0.6;
-                ahmadName.position.y = 1.8 + Math.sin(moveProgress * Math.PI * 7) * 0.4;
-                ryokoName.position.y = 1.8 + Math.cos(moveProgress * Math.PI * 7) * 0.4;
+                ahmadName.position.x = targetX + Math.sin(moveProgress * Math.PI * 5) * 0.5;
+                ryokoName.position.x = -targetX + Math.cos(moveProgress * Math.PI * 5) * 0.5;
+                ahmadName.position.y = 1.8 + Math.sin(moveProgress * Math.PI * 7) * 0.3;
+                ryokoName.position.y = 1.8 + Math.cos(moveProgress * Math.PI * 7) * 0.3;
                 
                 ahmad.position.z = -0.4 * ease;
                 ryoko.position.z = -0.4 * ease;
@@ -514,9 +477,6 @@ porque tú, Ryoko, eres mi guerra y mi paz.
                     const tilt = Math.sin((moveProgress - 0.6) * Math.PI * 2.5) * 0.3;
                     ahmad.children[1].rotation.x = tilt;
                     ryoko.children[1].rotation.x = tilt;
-                    // Arms reach out
-                    if (ahmad.userData.rightArm) ahmad.userData.rightArm.rotation.z = -0.4 - tilt * 0.8;
-                    if (ryoko.userData.leftArm) ryoko.userData.leftArm.rotation.z = 0.4 + tilt * 0.8;
                 }
             }
         }
@@ -535,9 +495,9 @@ porque tú, Ryoko, eres mi guerra y mi paz.
                 flameGroup.scale.set(1.15, 1.15, 1.15);
                 setTimeout(() => flameGroup.scale.set(1, 1, 1), 150);
                 
-                for (let i = 0; i < 45; i++) {
+                for (let i = 0; i < 40; i++) {
                     const spark = new THREE.Mesh(new THREE.SphereGeometry(0.045, 5, 5), new THREE.MeshStandardMaterial({ color: 0xff6688, emissive: 0xff4466 }));
-                    spark.position.set((Math.random() - 0.5) * 1.6, Math.random() * 2.5, (Math.random() - 0.5) * 1.6);
+                    spark.position.set((Math.random() - 0.5) * 1.5, Math.random() * 2.5, (Math.random() - 0.5) * 1.5);
                     flameGroup.add(spark);
                     setTimeout(() => flameGroup.remove(spark), 500);
                 }
@@ -557,7 +517,6 @@ porque tú, Ryoko, eres mi guerra y mi paz.
             innerF.scale.set(flick, flickY, flick);
             middleF.scale.set(flick * 1.04, flickY * 1.02, flick * 1.04);
             outerF.scale.set(flick * 1.08, flickY * 1.04, flick * 1.08);
-            glow.scale.set(1 + Math.sin(time * 16) * 0.06, 1 + Math.sin(time * 16) * 0.06, 1 + Math.sin(time * 16) * 0.06);
             
             orbitingHearts.forEach((h, idx) => {
                 const d = h.userData;
@@ -571,7 +530,6 @@ porque tú, Ryoko, eres mi guerra y mi paz.
             
             stars.rotation.y += 0.0003;
             particles.rotation.y += 0.005;
-            
             updateMoveAnimation();
             
             renderer.render(scene, camera);
@@ -581,6 +539,7 @@ porque tú, Ryoko, eres mi guerra y mi paz.
         
         animate();
 
+        // Event listeners
         document.getElementById('interactBtn').addEventListener('click', interact);
         document.getElementById('interactBtn').addEventListener('touchstart', (e) => { e.preventDefault(); interact(); });
         
@@ -595,8 +554,42 @@ porque tú, Ryoko, eres mi guerra y mi paz.
             const hits = ray.intersectObjects([innerF, middleF, outerF, glow]);
             if (hits.length) interact();
         });
+        
         window.addEventListener('touchstart', (e) => {
             if (e.touches.length && !poemShown) {
                 const rect = renderer.domElement.getBoundingClientRect();
                 const touch = e.touches[0];
-                mouse.x =
+                mouse.x = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
+                mouse.y = -((touch.clientY - rect.top) / rect.height) * 2 + 1;
+                ray.setFromCamera(mouse, camera);
+                const hits = ray.intersectObjects([innerF, middleF, outerF, glow]);
+                if (hits.length) interact();
+                e.preventDefault();
+            }
+        });
+        
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            interactions = 0;
+            poemShown = false;
+            moveTogether = false;
+            moveProgress = 0;
+            ahmad.position.x = -2.4;
+            ryoko.position.x = 2.4;
+            ahmad.position.z = 0;
+            ryoko.position.z = 0;
+            ahmadName.position.x = -2.4;
+            ryokoName.position.x = 2.4;
+            ahmadName.position.y = 1.8;
+            ryokoName.position.y = 1.8;
+            ahmad.children[1].rotation.x = 0;
+            ryoko.children[1].rotation.x = 0;
+            updateFlame(0);
+            updateUI();
+            showMsg("✨ La llama renació. Toca el fuego otra vez... Ahmad tiene más mensajes profundos para ti. 🔥💜");
+        });
+        
+        updateFlame(0);
+        updateUI();
+    </script>
+</body>
+</html>
