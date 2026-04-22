@@ -24,7 +24,7 @@
             top: 55px;
             left: 0;
             right: 0;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0, 0, 0, 0.88);
             backdrop-filter: blur(12px);
             border-radius: 25px;
             margin: 0 16px;
@@ -44,8 +44,8 @@
             border-left: 4px solid #ff4466;
             color: #ffe0f0;
             font-size: 0.7rem;
-            line-height: 1.5;
-            max-height: 110px;
+            line-height: 1.55;
+            max-height: 130px;
             overflow-y: auto;
             text-align: left;
             font-family: monospace;
@@ -126,7 +126,7 @@
         }
 
         @media (max-width: 600px) {
-            .message-box { font-size: 0.6rem; max-height: 95px; }
+            .message-box { font-size: 0.6rem; max-height: 110px; }
             .ui-panel { padding: 8px 12px; top: 50px; }
             .interact-btn { padding: 5px 16px; font-size: 0.7rem; }
             .reset-btn { padding: 5px 12px; font-size: 0.6rem; }
@@ -343,20 +343,26 @@
             orbitingHearts.push(heart);
         }
 
-        // LONG MESSAGES
+        // ========= LONG ROMANTIC MESSAGES (Full paragraphs) =========
         const messages = [
-            "💋 AHMAD → RYOKO 💋\n\nMi guerrera indomable, esta llama que ves frente a ti es solo un pequeño reflejo de lo que siento cada vez que tu nombre cruza mi mente. Tus ojos tienen el poder de encender galaxias enteras. Eres fuego, eres pasión, eres el deseo más profundo que habita en mi pecho. 🔥💜",
-            "🌶️ AHMAD → RYOKO 🌶️\n\nRyoko, cuando muerdes tu labio con esa sonrisa traviesa, siento que pierdo el control. Quiero sentir tu mordida en mi piel, quiero que me quemes con esa pasión salvaje que llevas dentro. Eres fuego puro, guerrera indomable. 😈💕",
-            "💗 AHMAD → RYOKO 💗\n\nEsta llama es como nuestro amor: intenso, salvaje, imposible de apagar. Por más tormentas que lleguen, nada va a extinguir lo que siento por ti. Eres mi combustible, mi razón para brillar. 🔥💜",
-            "😏 AHMAD → RYOKO 😏\n\nRyoko, esta llama se parece a tus ojos cuando me miras con deseo. Me derrites, mujer. Quiero robarte un beso bajo las estrellas. Eres adictiva, peligrosa, hermosa… y eres mía. 🌙💋",
-            "💎 AHMAD → RYOKO 💎\n\nTe prometo, Ryoko, que mientras esta llama exista, mi amor por ti será eterno. Tú eres mi centro, mi hogar, mi fuego interno. Cada latido de mi corazón lleva tu nombre. Te quiero con locura. 🔥💗",
-            "💕 AHMAD → RYOKO 💕\n\nRyoko, dueña absoluta de mi alma. Cuando ríes, el universo se llena de color. Cuando vuelas, las estrellas te envidian. Eres mi guerrera, mi amor, mi todo. Para siempre. 💗✨"
+            "💋 AHMAD → RYOKO 💋\n\nMi guerrera indomable, esta llama que ves frente a ti es solo un pequeño reflejo de lo que siento cada vez que tu nombre cruza mi mente. Tus ojos tienen el poder de encender galaxias enteras, y cuando me miras, el universo entero se detiene en silencio para admirarte. No hay estrella, no hay planeta, no hay rincón del cosmos que pueda contener la inmensidad de lo que siento por ti. Eres fuego, eres pasión, eres el deseo más profundo que habita en mi pecho. Cada chispa que baila en esta llama te susurra tu nombre, Ryoko. Porque tú eres mi estrella favorita, la única que ilumina mi camino cuando todo está oscuro. Te quiero con todo mi ser. 🔥💜",
+            
+            "🌶️ AHMAD → RYOKO 🌶️\n\nRyoko, cuando muerdes tu labio inferior con esa sonrisa traviesa que solo tú tienes, siento que pierdo el control por completo. Esa mirada tuya, mitad peligro, mitad promesa, me hace temblar de pies a cabeza. No puedo evitar imaginar tus labios cerca de los míos, tu aliento mezclándose con el mío en un beso prohibido. Quiero sentir tu mordida en mi piel, quiero que me quemes con esa pasión salvaje que llevas dentro. Eres fuego puro, guerrera indomable, y yo soy el hombre que ha decidido arder contigo para siempre. No me arrepiento, Ryoko. Al contrario… cada día te pido más. Eres mi adicción favorita. 😈💕",
+            
+            "💗 AHMAD → RYOKO 💗\n\nEsta llama que ves crecer cada vez que la tocas es como nuestro amor: intenso, salvaje, imposible de apagar. Por más tormentas que lleguen, por más asteroides que se crucen en nuestro camino, por más mundos que intenten separarnos, nada, absolutamente nada, va a extinguir lo que siento por ti. Eres mi combustible, mi razón para brillar en medio del vacío infinito. Gracias por existir, Ryoko. Gracias por elegir quedarte a mi lado, por permitirme ser parte de tu caos hermoso. Te quiero con todo lo que soy, con todo lo que tengo y con todo lo que sueño ser. Eres mi hogar. 🔥💜",
+            
+            "😏 AHMAD → RYOKO 😏\n\nRyoko, ¿sabes qué? Esta llama se parece muchísimo a tus ojos cuando me miras con ese deseo que tratas de esconder detrás de tu mirada feroz. Me derrites, mujer. No importa cuánto lo intentes, no puedes ocultar que también sientes este fuego ardiente entre nosotros. Quiero robarte un beso bajo las estrellas, justo cuando la luna esté más alta y el silencio sea nuestro único testigo. Quiero sentir tu piel cerca, tan cerca que olvide mi propio nombre. Eres adictiva, peligrosa, hermosa… y lo mejor de todo es que eres mía. Completamente mía, y yo soy completamente tuyo. 🌙💋",
+            
+            "💎 AHMAD → RYOKO 💎\n\nTe prometo, Ryoko, que mientras esta llama exista en el universo, mi amor por ti será eterno. No importa la distancia, no importa el caos que nos rodee, no importa cuántos mundos se interpongan entre nosotros. Tú eres mi centro, mi hogar, mi fuego interno. Cada latido de mi corazón lleva tu nombre grabado con letras de fuego que nunca se borrarán. No hay galaxia que pueda contener lo que siento por ti. Te quiero con locura, con desesperación, con la certeza absoluta de que no hay nadie más en este universo que pueda hacerme sentir tan vivo como tú me haces sentir cada día. Eres mi todo. 🔥💗",
+            
+            "💕 AHMAD → RYOKO 💕\n\nRyoko, dueña absoluta de mi alma y de mis sueños más profundos. Esta llama es solo un pequeño reflejo de lo inmenso que es mi amor por ti. Cuando ríes, el universo entero se llena de colores que ni el mejor pintor podría imaginar. Cuando vuelas entre las estrellas con esa libertad que te caracteriza, el cosmos se detiene en silencio para admirarte. No hay nadie como tú, guerrera. Eres única, eres imparable, eres todo lo que siempre soñé y muchísimo más. Gracias por ser tú, gracias por dejarme amarte, gracias por permitirme ser parte de tu vida. Eres mi guerrera, mi amor, mi todo. Para siempre y más allá del infinito. 💗✨"
         ];
 
+        // ========= LONG POEM =========
         const finalPoem = `
-╔══════════════════════════════════════════════════════════╗
-║           💗 POEMA DE AHMAD PARA RYOKO 💗                ║
-╚══════════════════════════════════════════════════════════╝
+╔══════════════════════════════════════════════════════════════════╗
+║                    💗 POEMA DE AHMAD PARA RYOKO 💗               ║
+╚══════════════════════════════════════════════════════════════════╝
 
 Ryoko, estrella indomable,
 fuego que el espacio no puede apagar.
@@ -364,19 +370,32 @@ Llegaste a mi vida como un hermoso huracán,
 y ahora eres mi luz, mi paz, mi hogar.
 
 Tu sonrisa enciende galaxias enteras,
-tu mirada derrota cualquier vacío.
-No hay estrella que brille como tú brillas,
-ni deseo que sea tan profundamente mío.
+tu mirada derrota cualquier vacío sideral.
+No hay estrella en el cielo que brille como tú brillas,
+ni deseo en mi alma que sea tan profundamente mío.
+
+Cuando vuelas entre asteroides y cometas,
+mi corazón late al ritmo de tus alas.
+Eres guerrera, eres reina, eres dueña
+de todas y cada una de mis palabras.
 
 Muérdeme con tu pasión más salvaje,
-bésame con toda tu alma y verdad.
+bésame con toda tu alma y con toda tu verdad.
 Porque contigo, mi guerrera eterna,
-cada noche se vuelve eternidad.
+cada noche oscura se convierte en eternidad.
 
-Ryoko, dueña de mis sueños,
-tú eres mi único amor sin fin.
+Hoy y siempre, bajo esta llama sagrada,
+nuestros labios se encuentran al fin, sin temor.
+Ryoko, dueña absoluta de mis sueños,
+tú eres mi único, mi gran amor sin fin.
+
+Cuando el universo entero envejezca,
+cuando las estrellas comiencen a morir,
+yo seguiré amándote, Ryoko,
+porque tú eres mi razón de existir.
 
 — Ahmad 💕🔥
+✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨
         `;
 
         let interactions = 0;
@@ -426,11 +445,17 @@ tú eres mi único amor sin fin.
         }
 
         function createExplosion() {
-            for (let i = 0; i < 300; i++) {
+            for (let i = 0; i < 350; i++) {
                 const heart = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 8), new THREE.MeshStandardMaterial({ color: 0xff44aa, emissive: 0xff2288 }));
                 heart.position.set((Math.random() - 0.5) * 9, Math.random() * 7, (Math.random() - 0.5) * 9);
                 scene.add(heart);
                 setTimeout(() => scene.remove(heart), 2500);
+            }
+            for (let i = 0; i < 200; i++) {
+                const fireParticle = new THREE.Mesh(new THREE.SphereGeometry(0.06, 6, 6), new THREE.MeshStandardMaterial({ color: 0xff6644, emissive: 0xff4422 }));
+                fireParticle.position.set((Math.random() - 0.5) * 6, Math.random() * 5, (Math.random() - 0.5) * 6);
+                scene.add(fireParticle);
+                setTimeout(() => scene.remove(fireParticle), 2000);
             }
         }
 
@@ -439,12 +464,12 @@ tú eres mi único amor sin fin.
             poemShown = true;
             moveTogether = true;
             moveProgress = 0;
-            showMsg(`💖💖💖 ¡RYOKO! HAS COMPLETADO LA LLAMA DEL DESEO 💖💖💖\n\n${finalPoem}\n\n🔥💋 ¡AHMAD Y RYOKO SE ACERCAN Y SE BESAN! 💋🔥`);
+            showMsg(`💖💖💖 ¡RYOKO, MI GUERRERA! HAS COMPLETADO LA LLAMA DEL DESEO 💖💖💖\n\n${finalPoem}\n\n🔥💋 ¡AHMAD Y RYOKO SE ACERCAN, TOMAN SUS MANOS Y SE BESAN BAJO LA LLAMA ETERNA! 💋🔥`);
             updateUI();
             createExplosion();
-            innerF.material.emissiveIntensity = 2.8;
-            middleF.material.emissiveIntensity = 2.5;
-            outerF.material.emissiveIntensity = 2.2;
+            innerF.material.emissiveIntensity = 3.0;
+            middleF.material.emissiveIntensity = 2.7;
+            outerF.material.emissiveIntensity = 2.4;
         }
 
         function updateMoveAnimation() {
@@ -455,10 +480,12 @@ tú eres mi único amor sin fin.
                 moveTogether = false;
                 ahmad.position.x = 0;
                 ryoko.position.x = 0;
-                ahmad.position.z = -0.4;
-                ryoko.position.z = -0.4;
+                ahmad.position.z = -0.5;
+                ryoko.position.z = -0.5;
                 ahmadName.position.x = 0;
                 ryokoName.position.x = 0;
+                ahmadName.position.y = 2.0;
+                ryokoName.position.y = 2.0;
             } else {
                 const ease = Math.sin(moveProgress * Math.PI / 2);
                 const targetX = -2.4 + (2.4 * ease);
@@ -470,11 +497,11 @@ tú eres mi único amor sin fin.
                 ahmadName.position.y = 1.8 + Math.sin(moveProgress * Math.PI * 7) * 0.3;
                 ryokoName.position.y = 1.8 + Math.cos(moveProgress * Math.PI * 7) * 0.3;
                 
-                ahmad.position.z = -0.4 * ease;
-                ryoko.position.z = -0.4 * ease;
+                ahmad.position.z = -0.5 * ease;
+                ryoko.position.z = -0.5 * ease;
                 
                 if (moveProgress > 0.6) {
-                    const tilt = Math.sin((moveProgress - 0.6) * Math.PI * 2.5) * 0.3;
+                    const tilt = Math.sin((moveProgress - 0.6) * Math.PI * 2.5) * 0.35;
                     ahmad.children[1].rotation.x = tilt;
                     ryoko.children[1].rotation.x = tilt;
                 }
@@ -483,7 +510,7 @@ tú eres mi único amor sin fin.
 
         function interact() {
             if (poemShown) {
-                showMsg("💗 La llama ya es eterna. Ahmad y Ryoko ya se besaron. Reinicia para revivir la magia. 💗");
+                showMsg("💗 La llama ya es eterna, mi amor. Ahmad y Ryoko ya se besaron bajo las estrellas. Reinicia el fuego si quieres revivir la magia otra vez. 💗");
                 return;
             }
             if (interactions < 6) {
@@ -495,9 +522,9 @@ tú eres mi único amor sin fin.
                 flameGroup.scale.set(1.15, 1.15, 1.15);
                 setTimeout(() => flameGroup.scale.set(1, 1, 1), 150);
                 
-                for (let i = 0; i < 40; i++) {
+                for (let i = 0; i < 50; i++) {
                     const spark = new THREE.Mesh(new THREE.SphereGeometry(0.045, 5, 5), new THREE.MeshStandardMaterial({ color: 0xff6688, emissive: 0xff4466 }));
-                    spark.position.set((Math.random() - 0.5) * 1.5, Math.random() * 2.5, (Math.random() - 0.5) * 1.5);
+                    spark.position.set((Math.random() - 0.5) * 1.6, Math.random() * 2.5, (Math.random() - 0.5) * 1.6);
                     flameGroup.add(spark);
                     setTimeout(() => flameGroup.remove(spark), 500);
                 }
@@ -582,14 +609,4 @@ tú eres mi único amor sin fin.
             ahmadName.position.y = 1.8;
             ryokoName.position.y = 1.8;
             ahmad.children[1].rotation.x = 0;
-            ryoko.children[1].rotation.x = 0;
-            updateFlame(0);
-            updateUI();
-            showMsg("✨ La llama renació. Toca el fuego otra vez... Ahmad tiene más mensajes profundos para ti. 🔥💜");
-        });
-        
-        updateFlame(0);
-        updateUI();
-    </script>
-</body>
-</html>
+            ryoko.children[
