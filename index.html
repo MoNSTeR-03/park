@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>🌷 PARQUE DEL AMOR | AHMAD 🌙 RYOKO 🌷</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Courier New', 'Segoe UI', monospace;
+            background-color: #0a2f1f;
+            color: white;
+        }
+        /* UI Overlay */
+        .ui-panel {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 32px;
+            margin: 0 16px 20px 16px;
+            padding: 16px;
+            border: 1px solid #d98eff;
+            box-shadow: 0 0 25px rgba(180, 100, 255, 0.4);
+            z-index: 20;
+            text-align: center;
+            pointer-events: auto;
+        }
+        .message-box {
+            background: #1a0525dd;
+            border-radius: 28px;
+            padding: 14px;
+            margin-bottom: 12px;
+            border-left: 5px solid #ff88dd;
+            color: #fff0f5;
+            font-size: 0.85rem;
+            line-height: 1.45;
+            max-height: 130px;
+            overflow-y: auto;
+            text-align: left;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .counter {
+            font-size: 0.7rem;
+            color: #ffccff;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+        .reset-btn {
+            background: #ff66aa44;
+            border: 1px solid #ff99dd;
+            padding: 8px 20px;
+            border-radius: 60px;
+            color: #ffe0ff;
+            font-weight: bold;
+            font-size: 0.75rem;
+            cursor: pointer;
+            display: inline-block;
+            transition: 0.1s;
+            backdrop-filter: blur(4px);
+        }
+        .reset-btn:active {
+            transform: scale(0.96);
+            background: #ff88aa88;
+        }
+        .title {
+            position: absolute;
+            top: 15px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #ffe2ff;
+            background: rgba(0,0,0,0.5);
+            padding: 6px;
+            border-radius: 40px;
+            width: fit-content;
+            margin: 0 auto;
+            backdrop-filter: blur(4px);
+            z-index: 20;
+            pointer-events: none;
+            font-weight: bold;
+        }
+        @media (max-width: 600px) {
+            .message-box { font-size: 0.7rem; max-height: 110px; }
+            .ui-panel { padding: 12px; bottom: 12px; margin: 0 12px 12px 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="title">🌸 PARQUE DE LOS JURAMENTOS | AHMAD ✨ RYOKO 🌸</div>
+    <div class="ui-panel" id="uiPanel">
+        <div class="counter" id="progressCounter">🌸 FLORES: 0/5  |  🦊 ANIMALES: 0/5 🌸</div>
+        <div class="message-box" id="romanticMessage">
+            ✨ Toca las flores moradas o los animales que caminan...<br>
+            Cada uno guarda un mensaje de Ahmad para Ryoko. 💜
+        </div>
+        <div class="reset-btn" id="resetBtn">🔄 REINICIAR MAGIA DEL PARQUE 🔄</div>
+    </div>
+
+    <!-- Import Three.js and add-ons -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
+        // --- setup scene, camera, renderers ---
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a2f1f);
+        scene.fog = new THREE.FogExp2(0x0a2f1f, 0.012);
+
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(8, 5, 12);
+        camera.lookAt(0, 0, 0);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        document.body.appendChild(renderer.domElement);
+
+        const labelRenderer = new CSS2DRenderer();
+        labelRenderer.setSize(window.innerWidth, window.innerHeight);
+        labelRenderer.domElement.style.position = 'absolute';
+        labelRenderer.domElement.style.top = '0px';
+        labelRenderer.domElement.style.left = '0px';
+        labelRenderer.domElement.style.pointerEvents = 'none';
+        document.body.appendChild(labelRenderer.domElement);
+
+        // --- controls (user can orbit) ---
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.autoRotate = false;
+        controls.enableZoom = true;
+        controls.enablePan = true;
+        controls.target.set(0, 1.5, 0);
+
+        // --- LIGHTS ---
+        const ambientLight = new THREE.AmbientLight(0x404060);
+        scene.add(ambientLight);
+        const sunLight = new THREE.DirectionalLight(0xffeedd, 1.2);
+        sunLight.position.set(5, 12, 4);
+        sunLight.castShadow = true;
+        sunLight.receiveShadow = true;
+        scene.add(sunLight);
+        const fillLight = new THREE.PointLight(0xaa88ff, 0.5);
+        fillLight.position.set(2, 3, 3);
+        scene.add(fillLight);
+        const backLight = new THREE.PointLight(0xffaa88, 0.4);
+        backLight.position.set(-2, 2, -4);
+        scene.add(backLight);
+        
+        // --- Grass ground plane with slight texture feel ---
+        const groundMat = new THREE.MeshStandardMaterial({ color: 0x5c9e5e, roughness: 0.8, metalness: 0.1 });
+        const ground = new THREE.Mesh(new THREE.PlaneGeometry(22, 22), groundMat);
+        ground.rotation.x = -Math.PI / 2;
+        ground.position.y = -0.2;
+        ground.receiveShadow = true;
+        scene.add(ground);
+        
+        // decorative grass patches (small cylinders)
+        for (let i = 0; i < 400; i++) {
+            const blade = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.1, 0.2, 3), new THREE.MeshStandardMaterial({ color: 0x7cb57c }));
+            blade.position.x = (Math.random() - 0.5) * 18;
+            blade.position.z = (Math.random() - 0.5) * 18;
+            blade.position.y = -0.1;
+            blade.castShadow = false;
+            scene.add(blade);
+        }
+        
+        // --- trees to create park atmosphere ---
+        const treeMatTrunk = new THREE.MeshStandardMaterial({ color: 0x8b5a2b });
+        const treeMatLeaf = new THREE.MeshStandardMaterial({ color: 0x6aab5a });
+        for (let i = 0; i < 35; i++) {
+            const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.6, 1.2, 6), treeMatTrunk);
+            const foliage = new THREE.Mesh(new THREE.ConeGeometry(0.7, 1.2, 8), treeMatLeaf);
+            trunk.position.x = (Math.random() - 0.5) * 16;
+            trunk.position.z = (Math.random() - 0.5) * 16;
+            trunk.position.y = 0.4;
+            foliage.position.y = 1.0;
+            trunk.add(foliage);
+            trunk.castShadow = true;
+            scene.add(trunk);
+        }
+        
+        // ========= 5 PURPLE FLOWERS (interactive) =========
+        const flowerPositions = [
+            { x: -3.2, z: 2.5, name: "🌷 FLOR DEL ALMA" },
+            { x: 2.8, z: 3.0, name: "🌷 FLOR DEL DESEO" },
+            { x: 4.0, z: -1.5, name: "🌷 FLOR DE LA PROMESA" },
+            { x: -2.5, z: -3.2, name: "🌷 FLOR DEL VALOR" },
+            { x: 0.5, z: -4.0, name: "🌷 FLOR ETERNA" }
+        ];
+        
+        const flowerMessages = [
+            "💜 AHMAD → RYOKO: Eres como esta flor, única y radiante. Tu fuerza me inspira cada día. Gracias por existir en mi jardín. 💜",
+            "💋 AHMAD (sexy): Ryoko, cuando pasas cerca, hasta las flores se sonrojan. Quiero robarte un beso bajo la luna llena. Eres mi primavera eterna. 😈🌙",
+            "💎 AHMAD: Te prometo cuidar cada latido tuyo. Eres mi tesoro más valioso, mi guerrera de flores púrpura. 💎",
+            "🔥 Ryoko, tu mirada enciende este parque entero. Eres fuego y calma, todo lo que necesito. 🌸",
+            "💗 Eres la dueña de mi corazón, Ryoko. Cada pétalo susurra tu nombre. Te quiero con todo mi caos. 💗"
+        ];
+        
+        // ========= 5 ANIMALS (walking creatures) =========
+        // each animal will be a simple 3D model + CSS2D label + wandering movement
+        const animalNames = ["🦊 ZORRO ETERNO", "🐇 CONEJO DEL AMOR", "🦌 CIERVO SAGRADO", "🐿️ ARDILLA DULCE", "🦔 ERIZO DE LUZ"];
+        const animalMessages = [
+            "💕 AHMAD: Este zorro lleva mi mensaje: te seguiría a cualquier galaxia. Eres mi estrella favorita. 💕",
+            "😏 AHMAD (picante): Conejo travieso, como tú cuando me muerdes el labio. Quiero más de tu fuego, Ryoko. 🌶️",
+            "🦌 AHMAD: Eres tan libre como este ciervo, pero elegiste quedarte a mi lado. Eres mi bendición. 🌹",
+            "💗 Ardilla curiosa: Ahmad dice que su corazón brinca como yo cada vez que Ryoko sonríe. 💗",
+            "🦔 Erizo: Aunque tenga espinas, Ahmad abraza a Ryoko sin miedo. Porque ella es su hogar. 🖤"
+        ];
+        
+        // store animal objects: { mesh, label, angle, radius, speed, yOffset, message, discovered }
+        const animals = [];
+        
+        function createAnimal(typeIndex, startX, startZ, color) {
+            const bodyGeo = new THREE.SphereGeometry(0.35, 24, 24);
+            const bodyMat = new THREE.MeshStandardMaterial({ color: color, emissive: 0x442200, emissiveIntensity: 0.1 });
+            const body = new THREE.Mesh(bodyGeo, bodyMat);
+            body.castShadow = true;
+            const headGeo = new THREE.SphereGeometry(0.28, 24, 24);
+            const head = new THREE.Mesh(headGeo, bodyMat);
+            head.position.set(0.45, 0.2, 0);
+            body.add(head);
+            // ears
+            const earGeo = new THREE.ConeGeometry(0.18, 0.3, 8);
+            const earMat = new THREE.MeshStandardMaterial({ color: color });
+            const earL = new THREE.Mesh(earGeo, earMat);
+            earL.position.set(-0.2, 0.45, 0);
+            const earR = new THREE.Mesh(earGeo, earMat);
+            earR.position.set(0.2, 0.45, 0);
+            head.add(earL);
+            head.add(earR);
+            
+            const group = new THREE.Group();
+            group.add(body);
+            group.position.set(startX, 0.1, startZ);
+            scene.add(group);
+            
+            // CSS2D label
+            const div = document.createElement('div');
+            div.style.backgroundColor = 'rgba(60,20,50,0.8)';
+            div.style.backdropFilter = 'blur(8px)';
+            div.style.borderRadius = '40px';
+            div.style.padding = '5px 12px';
+            div.style.border = `1px solid #ff99cc`;
+            div.style.fontSize = '0.65rem';
+            div.style.fontWeight = 'bold';
+            div.style.color = '#ffddf4';
+            div.style.fontFamily = 'monospace';
+            div.style.pointerEvents = 'auto';
+            div.style.cursor = 'pointer';
+            div.innerHTML = `${animalNames[typeIndex]} ✨`;
+            div.style.textAlign = 'center';
+            const labelObj = new CSS2DObject(div);
+            labelObj.position.set(startX, 0.7, startZ);
+            scene.add(labelObj);
+            
+            return {
+                group: group,
+                label: labelObj,
+                angle: Math.random() * Math.PI * 2,
+                radius: 1.8,
+                speed: 0.008 + Math.random() * 0.006,
+                centerX: startX,
+                centerZ: startZ,
+                discovered: false,
+                message: animalMessages[typeIndex],
+                name: animalNames[typeIndex]
+            };
+        }
+        
+        const animalStartPos = [
+            { x: -3.0, z: -2.0, color: 0xcc8844 },
+            { x: 3.5, z: -1.0, color: 0xddbb99 },
+            { x: 2.0, z: 3.2, color: 0xaa8866 },
+            { x: -2.5, z: 3.5, color: 0xbb9966 },
+            { x: 0, z: -3.8, color: 0xaa7755 }
+        ];
+        
+        for (let i = 0; i < 5; i++) {
+            const anim = createAnimal(i, animalStartPos[i].x, animalStartPos[i].z, animalStartPos[i].color);
+            animals.push(anim);
+        }
+        
+        // create flowers (3D + CSS2D)
+        const flowers = [];
+        flowerPositions.forEach((pos, idx) => {
+            const stemGeo = new THREE.CylinderGeometry(0.08, 0.12, 0.5, 6);
+            const stemMat = new THREE.MeshStandardMaterial({ color: 0x5c9e3a });
+            const stem = new THREE.Mesh(stemGeo, stemMat);
+            stem.position.set(pos.x, 0.1, pos.z);
+            scene.add(stem);
+            
+            const flowerHead = new THREE.Mesh(new THREE.SphereGeometry(0.28, 16, 16), new THREE.MeshStandardMaterial({ color: 0xbf5eff, emissive: 0x8822aa, emissiveIntensity: 0.3 }));
+            flowerHead.position.set(pos.x, 0.45, pos.z);
+            scene.add(flowerHead);
+            
+            // CSS2D label
+            const div = document.createElement('div');
+            div.style.backgroundColor = 'rgba(80,20,90,0.8)';
+            div.style.backdropFilter = 'blur(8px)';
+            div.style.borderRadius = '40px';
+            div.style.padding = '5px 12px';
+            div.style.border = `1px solid #d98eff`;
+            div.style.fontSize = '0.65rem';
+            div.style.fontWeight = 'bold';
+            div.style.color = '#ffe2ff';
+            div.style.fontFamily = 'monospace';
+            div.style.pointerEvents = 'auto';
+            div.style.cursor = 'pointer';
+            div.innerHTML = `${flowerPositions[idx].name} 💜`;
+            div.style.textAlign = 'center';
+            const labelObj = new CSS2DObject(div);
+            labelObj.position.set(pos.x, 0.85, pos.z);
+            scene.add(labelObj);
+            
+            flowers.push({
+                mesh: flowerHead,
+                label: labelObj,
+                discovered: false,
+                message: flowerMessages[idx],
+                name: flowerPositions[idx].name
+            });
+        });
+        
+        // --- tracking ---
+        let flowersFound = 0;
+        let animalsFound = 0;
+        let poemShown = false;
+        
+        // POEMA FINAL (poderoso, romántico, sin debilidades)
+        const finalPoem = `
+╔══════════════════════════════════════════╗
+║     💗 POEMA DE AHMAD PARA RYOKO 💗      ║
+╚══════════════════════════════════════════╝
+
+Ryoko, guerrera de parques y estrellas,
+caminas entre flores y el viento te abraza.
+Eres la luz que en mi sendero brilla,
+la fuerza que mi alma enlaza.
+
+Cada animal susurra tu nombre,
+cada pétalo guarda un secreto.
+Ahmad te jura amor eterno,
+sin miedo, sin freno, perfecto.
+
+Tu sonrisa es primavera eterna,
+tu mirada un volcán de verdad.
+Contigo el parque es un sueño,
+y el universo, una eternidad.
+
+Toma mi mano, Ryoko,
+bailemos bajo el sol y la luna.
+Porque desde hoy y para siempre,
+tú eres mi única fortuna.
+
+— Ahmad (el hombre que florece a tu lado) 💕🌷
+✨✨✨✨✨✨✨✨✨✨✨✨✨
+        `;
+        
+        function updateCounterUI() {
+            const counterDiv = document.getElementById('progressCounter');
+            if (counterDiv) {
+                if (!poemShown) {
+                    counterDiv.innerHTML = `🌸 FLORES: ${flowersFound}/5  |  🦊 ANIMALES: ${animalsFound}/5 🌸`;
+                } else {
+                    counterDiv.innerHTML = `💞 PARQUE COMPLETO · AMOR ETERNO 💞`;
+                }
+            }
+        }
+        
+        function showMessage(msg, isSpecial = false) {
+            const msgBox = document.getElementById('romanticMessage');
+            if (!msgBox) return;
+            msgBox.innerHTML = msg;
+            if (isSpecial) {
+                msgBox.style.borderLeftColor = '#ff44dd';
+                msgBox.style.backgroundColor = '#2a0a30dd';
+            } else {
+                msgBox.style.borderLeftColor = '#ff88dd';
+            }
+            msgBox.scrollTop = 0;
+            const panel = document.getElementById('uiPanel');
+            if (panel) {
+                panel.style.transform = 'scale(1.01)';
+                setTimeout(() => { if(panel) panel.style.transform = ''; }, 150);
+            }
+        }
+        
+        function showPoem() {
+            if (poemShown) return;
+            poemShown = true;
+            showMessage(`💖💖💖 ¡RYOKO, GUERRERA! HAS DESPERTADO LA MAGIA COMPLETA DEL PARQUE 💖💖💖\n\n${finalPoem}\n\n🌹 Ahmad escribió cada verso mirando las flores y pensando en tu fuerza. Eres imparable, mi amor. 🌹`, true);
+            // visual celebration: add floating hearts
+            for (let i = 0; i < 60; i++) {
+                const heartGeo = new THREE.SphereGeometry(0.08, 8, 8);
+                const heartMat = new THREE.MeshStandardMaterial({ color: 0xff66aa, emissive: 0xff2288 });
+                const particle = new THREE.Mesh(heartGeo, heartMat);
+                particle.position.set((Math.random() - 0.5) * 12, Math.random() * 4, (Math.random() - 0.5) * 12);
+                scene.add(particle);
+                setTimeout(() => scene.remove(particle), 2000);
+            }
+            updateCounterUI();
+        }
+        
+        function checkCompletion() {
+            if (flowersFound === 5 && animalsFound === 5 && !poemShown) {
+                setTimeout(() => {
+                    showPoem();
+                }, 300);
+            }
+        }
+        
+        // Raycaster for clicks on flowers and animals
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        
+        function onCanvasClick(event) {
+            if (poemShown) {
+                showMessage("💗 El poema ya florece en tu corazón, Ryoko. Ahmad lo escribió solo para ti. Reinicia el parque si quieres revivir la magia. 💗", false);
+                return;
+            }
+            const rect = renderer.domElement.getBoundingClientRect();
+            const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+            mouse.set(x, y);
+            raycaster.setFromCamera(mouse, camera);
+            
+            // collect clickable objects: flower meshes + animal groups
+            const clickableFlowers = flowers.map(f => f.mesh);
+            const clickableAnimals = animals.map(a => a.group);
+            const allClickable = [...clickableFlowers, ...clickableAnimals];
+            const intersects = raycaster.intersectObjects(allClickable);
+            if (intersects.length > 0) {
+                const hit = intersects[0].object;
+                // check flower
+                const flowerHit = flowers.find(f => f.mesh === hit);
+                if (flowerHit && !flowerHit.discovered) {
+                    flowerHit.discovered = true;
+                    flowersFound++;
+                    // visual feedback: change flower color + add glow ring
+                    flowerHit.mesh.material.emissiveIntensity = 0.8;
+                    const ringGeo = new THREE.TorusGeometry(0.35, 0.04, 16, 40);
+                    const ringMat = new THREE.MeshStandardMaterial({ color: 0xff88ff });
+                    const ring = new THREE.Mesh(ringGeo, ringMat);
+                    flowerHit.mesh.add(ring);
+                    flowerHit.label.element.style.backgroundColor = '#ff99ffaa';
+                    flowerHit.label.element.style.border = '2px solid #ffccff';
+                    showMessage(`💜 ¡FLOR ENCONTRADA! ${flowerHit.message} 💜`, false);
+                    updateCounterUI();
+                    checkCompletion();
+                }
+                else if (flowerHit && flowerHit.discovered) {
+                    showMessage(`🌸 Esta flor ya entregó su mensaje, Ryoko. Pero su aroma recuerda que Ahmad te ama. 🌸`, false);
+                }
+                // check animal
+                const animalHit = animals.find(a => a.group === hit);
+                if (animalHit && !animalHit.discovered) {
+                    animalHit.discovered = true;
+                    animalsFound++;
+                    // visual: add glowing collar
+                    const collarGeo = new THREE.TorusGeometry(0.4, 0.05, 16, 40);
+                    const collarMat = new THREE.MeshStandardMaterial({ color: 0xffaa88, emissive: 0xff6688 });
+                    const collar = new THREE.Mesh(collarGeo, collarMat);
+                    animalHit.group.add(collar);
+                    animalHit.label.element.style.backgroundColor = '#ffaa88aa';
+                    animalHit.label.element.style.border = '2px solid #ffccaa';
+                    showMessage(`🦊 ¡ANIMAL ENCONTRADO! ${animalHit.message} 🦊`, false);
+                    updateCounterUI();
+                    checkCompletion();
+                }
+                else if (animalHit && animalHit.discovered) {
+                    showMessage(`✨ Este animal ya te dio su mensaje, guerrera. Sigue explorando el parque. ✨`, false);
+                }
+            }
+        }
+        
+        window.addEventListener('click', onCanvasClick, false);
+        window.addEventListener('touchstart', (e) => {
+            if (e.touches.length) {
+                const touch = e.touches[0];
+                const fakeEvent = { clientX: touch.clientX, clientY: touch.clientY };
+                onCanvasClick(fakeEvent);
+                e.preventDefault();
+            }
+        });
+        
+        // Animal walking animation (circular around their center points)
+        function animateAnimals() {
+            animals.forEach(animal => {
+                if (!animal.discovered) {
+                    animal.angle += animal.speed;
+                    const offsetX = Math.cos(animal.angle) * animal.radius;
+                    const offsetZ = Math.sin(animal.angle) * animal.radius;
+                    animal.group.position.x = animal.centerX + offsetX;
+                    animal.group.position.z = animal.centerZ + offsetZ;
+                    animal.label.position.x = animal.centerX + offsetX;
+                    animal.label.position.z = animal.centerZ + offsetZ;
+                    // rotate group to face direction
+                    const angleDir = Math.atan2(offsetZ, offsetX);
+                    animal.group.rotation.y = angleDir;
+                } else {
+                    // already discovered animals stay still but wiggle
+                    animal.group.position.y = 0.1 + Math.sin(Date.now() * 0.005) * 0.02;
+                }
+            });
+        }
+        
+        // floating particles around park
+        const particleCount = 500;
+        const particleGeo = new THREE.BufferGeometry();
+        const particlePositions = [];
+        for (let i = 0; i < particleCount; i++) {
+            particlePositions.push((Math.random() - 0.5) * 20);
+            particlePositions.push(Math.random() * 5);
+            particlePositions.push((Math.random() - 0.5) * 18);
+        }
+        particleGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(particlePositions), 3));
+        const particleMat = new THREE.PointsMaterial({ color: 0xffaacc, size: 0.05, transparent: true });
+        const fairyDust = new THREE.Points(particleGeo, particleMat);
+        scene.add(fairyDust);
+        
+        // Animation loop
+        let time = 0;
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.016;
+            animateAnimals();
+            fairyDust.rotation.y += 0.002;
+            controls.update(); 
+            renderer.render(scene, camera);
+            labelRenderer.render(scene, camera);
+        }
+        animate();
+        
+        // Reset functionality
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            flowersFound = 0;
+            animalsFound = 0;
+            poemShown = false;
+            // reset flowers
+            flowers.forEach(flower => {
+                flower.discovered = false;
+                flower.mesh.material.emissiveIntensity = 0.3;
+                // remove ring
+                const children = flower.mesh.children;
+                for (let i = children.length-1; i >= 0; i--) {
+                    if (children[i].isTorus) flower.mesh.remove(children[i]);
+                }
+                flower.label.element.style.backgroundColor = 'rgba(80,20,90,0.8)';
+                flower.label.element.style.border = '1px solid #d98eff';
+            });
+            // reset animals
+            animals.forEach(animal => {
+                animal.discovered = false;
+                const children = animal.group.children;
+                for (let i = children.length-1; i >= 0; i--) {
+                    if (children[i].isTorus) animal.group.remove(children[i]);
+                }
+                animal.label.element.style.backgroundColor = 'rgba(60,20,50,0.8)';
+                animal.label.element.style.border = '1px solid #ff99cc';
+                // reposition to original centers
+                animal.group.position.x = animal.centerX;
+                animal.group.position.z = animal.centerZ;
+                animal.label.position.x = animal.centerX;
+                animal.label.position.z = animal.centerZ;
+                animal.angle = Math.random() * Math.PI * 2;
+            });
+            updateCounterUI();
+            showMessage("✨ El parque renació. Las flores y animales tienen nuevos mensajes de Ahmad para ti, Ryoko. Vuelve a explorar el amor. 🌷🦊", false);
+            camera.position.set(8, 5, 12);
+            controls.target.set(0, 1.5, 0);
+            controls.update();
+        });
+        
+        updateCounterUI();
+        console.log('Parque 3D listo, Ryoko y Ahmad en el corazón de la naturaleza 💜');
+    </script>
+</body>
+</html>
