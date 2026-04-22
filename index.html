@@ -16,7 +16,7 @@
             bottom: 20px;
             left: 0;
             right: 0;
-            background: rgba(0,0,0,0.75);
+            background: rgba(0,0,0,0.8);
             backdrop-filter: blur(12px);
             border-radius: 32px;
             margin: 0 16px 20px 16px;
@@ -116,13 +116,13 @@
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
         import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 
-        // --- setup scene, camera ---
+        // --- setup scene ---
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x1a2a4f); // 5PM deep blue sky
+        scene.background = new THREE.Color(0x1a2a4f);
         scene.fog = new THREE.FogExp2(0x1a2a4f, 0.008);
 
-        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(7, 4.5, 11);
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(6, 5, 10);
         camera.lookAt(0, 1, 0);
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -146,13 +146,12 @@
         controls.enableZoom = true;
         controls.enablePan = true;
         controls.target.set(0, 1.5, 0);
-        controls.maxPolarAngle = Math.PI / 2.4;
+        controls.maxPolarAngle = Math.PI / 2.2;
 
         // --- SUN (5PM golden hour) ---
-        const sunLight = new THREE.DirectionalLight(0xffcc88, 1.3);
+        const sunLight = new THREE.DirectionalLight(0xffcc88, 1.2);
         sunLight.position.set(5, 8, -3);
         sunLight.castShadow = true;
-        sunLight.receiveShadow = false;
         sunLight.shadow.mapSize.width = 1024;
         sunLight.shadow.mapSize.height = 1024;
         scene.add(sunLight);
@@ -164,88 +163,79 @@
         fillLight.position.set(2, 3, 4);
         scene.add(fillLight);
         
-        const backLight = new THREE.PointLight(0x88aaff, 0.4);
-        backLight.position.set(-3, 3, -5);
-        scene.add(backLight);
-        
-        // --- sun sphere visual ---
-        const sunGeometry = new THREE.SphereGeometry(1.2, 64, 64);
-        const sunMaterial = new THREE.MeshStandardMaterial({ color: 0xffaa66, emissive: 0xff6633, emissiveIntensity: 1.2 });
-        const sunSphere = new THREE.Mesh(sunGeometry, sunMaterial);
-        sunSphere.position.set(12, 8, -8);
+        // --- sun sphere ---
+        const sunSphere = new THREE.Mesh(
+            new THREE.SphereGeometry(1.0, 64, 64),
+            new THREE.MeshStandardMaterial({ color: 0xffaa66, emissive: 0xff6633, emissiveIntensity: 1.0 })
+        );
+        sunSphere.position.set(10, 7, -10);
         scene.add(sunSphere);
         
-        // --- simple clouds ---
+        // --- clouds ---
         const cloudMat = new THREE.MeshStandardMaterial({ color: 0xffddbb, transparent: true, opacity: 0.7 });
-        for (let i = 0; i < 12; i++) {
-            const cloudGroup = new THREE.Group();
-            const sizes = [0.5, 0.6, 0.4];
+        for (let i = 0; i < 10; i++) {
+            const cloud = new THREE.Group();
             for (let j = 0; j < 3; j++) {
-                const part = new THREE.Mesh(new THREE.SphereGeometry(sizes[j], 8, 8), cloudMat);
+                const part = new THREE.Mesh(new THREE.SphereGeometry(0.4, 8, 8), cloudMat);
                 part.position.set((j - 1) * 0.5, 0, 0);
-                cloudGroup.add(part);
+                cloud.add(part);
             }
-            cloudGroup.position.set((Math.random() - 0.5) * 18, 4 + Math.random() * 2.5, (Math.random() - 0.5) * 12 - 5);
-            scene.add(cloudGroup);
+            cloud.position.set((Math.random() - 0.5) * 15, 4 + Math.random() * 2, (Math.random() - 0.5) * 12 - 5);
+            scene.add(cloud);
         }
         
-        // --- stars (early stars at 5pm) ---
+        // --- stars (early evening) ---
         const starGeometry = new THREE.BufferGeometry();
-        const starCount = 800;
-        const starPositions = new Float32Array(starCount * 3);
-        for (let i = 0; i < starCount; i++) {
-            starPositions[i*3] = (Math.random() - 0.5) * 400;
-            starPositions[i*3+1] = (Math.random() - 0.5) * 100 + 15;
-            starPositions[i*3+2] = (Math.random() - 0.5) * 150 - 70;
+        const starPositions = [];
+        for (let i = 0; i < 600; i++) {
+            starPositions.push((Math.random() - 0.5) * 300);
+            starPositions.push((Math.random() - 0.5) * 80 + 10);
+            starPositions.push((Math.random() - 0.5) * 150 - 50);
         }
-        starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-        const starMaterial = new THREE.PointsMaterial({ color: 0xfff5cc, size: 0.15, transparent: true, opacity: 0.6 });
-        const starsField = new THREE.Points(starGeometry, starMaterial);
-        scene.add(starsField);
+        starGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(starPositions), 3));
+        const stars = new THREE.Points(starGeometry, new THREE.PointsMaterial({ color: 0xfff5cc, size: 0.12, transparent: true, opacity: 0.5 }));
+        scene.add(stars);
         
-        // --- GROUND (grassy meadow)---
+        // --- GROUND ---
         const groundMat = new THREE.MeshStandardMaterial({ color: 0x6aab6a, roughness: 0.9, metalness: 0.05 });
         const ground = new THREE.Mesh(new THREE.PlaneGeometry(24, 24), groundMat);
         ground.rotation.x = -Math.PI / 2;
-        ground.position.y = -0.25;
+        ground.position.y = -0.3;
         ground.receiveShadow = true;
         scene.add(ground);
         
-        // small grass patches
-        for (let i = 0; i < 600; i++) {
+        // --- grass patches ---
+        for (let i = 0; i < 400; i++) {
             const blade = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.08, 0.2, 3), new THREE.MeshStandardMaterial({ color: 0x7cb57c }));
             blade.position.x = (Math.random() - 0.5) * 20;
             blade.position.z = (Math.random() - 0.5) * 20;
-            blade.position.y = -0.15;
+            blade.position.y = -0.2;
             blade.castShadow = false;
             scene.add(blade);
         }
         
-        // --- SHORT TREES (so she can see everything) ---
-        const trunkMat = new THREE.MeshStandardMaterial({ color: 0xaa7a4a });
-        const leafMat = new THREE.MeshStandardMaterial({ color: 0x7cad5a });
-        for (let i = 0; i < 45; i++) {
-            const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.45, 0.9, 6), trunkMat);
-            const foliage = new THREE.Mesh(new THREE.ConeGeometry(0.55, 0.9, 6), leafMat);
+        // --- SHORT TREES ---
+        for (let i = 0; i < 40; i++) {
+            const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.45, 0.9, 6), new THREE.MeshStandardMaterial({ color: 0xaa7a4a }));
             trunk.position.x = (Math.random() - 0.5) * 17;
             trunk.position.z = (Math.random() - 0.5) * 17;
-            trunk.position.y = 0.3;
+            trunk.position.y = 0.25;
+            trunk.castShadow = true;
+            const foliage = new THREE.Mesh(new THREE.ConeGeometry(0.55, 0.8, 6), new THREE.MeshStandardMaterial({ color: 0x7cad5a }));
             foliage.position.y = 0.7;
             trunk.add(foliage);
-            trunk.castShadow = true;
             scene.add(trunk);
         }
         
-        // --- 5 PURPLE FLOWERS (interactive) ---
+        // ========= 5 PURPLE FLOWERS =========
         const flowerPositions = [
-            { x: -3.5, z: 2.8, name: "🌷 FLOR DEL ALMA" },
-            { x: 3.2, z: 3.2, name: "🌷 FLOR DEL DESEO" },
-            { x: 4.2, z: -1.8, name: "🌷 FLOR DE LA PROMESA" },
-            { x: -2.8, z: -3.5, name: "🌷 FLOR DEL VALOR" },
-            { x: 0.8, z: -4.2, name: "🌷 FLOR ETERNA" }
+            { x: -3.2, z: 2.5, name: "🌷 FLOR DEL ALMA" },
+            { x: 3.0, z: 3.0, name: "🌷 FLOR DEL DESEO" },
+            { x: 4.0, z: -1.5, name: "🌷 FLOR DE LA PROMESA" },
+            { x: -2.5, z: -3.0, name: "🌷 FLOR DEL VALOR" },
+            { x: 0.5, z: -4.0, name: "🌷 FLOR ETERNA" }
         ];
         
-        // LONG romantic messages for flowers
         const flowerMessages = [
             "💜 AHMAD → RYOKO 💜\n\nRyoko, cada vez que veo una flor morada, recuerdo tu fuerza y tu belleza salvaje. No eres frágil como una flor común… eres una guerrera que florece incluso en tormentas interestelares. Gracias por elegir quedarte en mi jardín, por permitirme admirar tu luz sin quemarme. Eres mi primavera eterna, mi estación favorita. Te quiero con todo mi caos, con toda mi calma. 💜",
             
@@ -258,7 +248,45 @@
             "💗 AHMAD → RYOKO 💗\n\nRyoko, dueña de mi corazón. Cada pétalo de esta flor susurra tu nombre. No hay galaxia, ni planeta, ni rincón del universo que prefiera sobre estar contigo. Eres mi hogar, mi caos favorito, mi razón para sonreír cada mañana. Te quiero con todo lo que soy y con todo lo que sueño ser. Gracias por existir en mi mismo universo. 💗"
         ];
         
-        // --- 5 ANIMALS (with clickable hit area) ---
+        const flowers = [];
+        
+        flowerPositions.forEach((pos, idx) => {
+            const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.12, 0.5, 6), new THREE.MeshStandardMaterial({ color: 0x5c9e3a }));
+            stem.position.set(pos.x, -0.05, pos.z);
+            scene.add(stem);
+            
+            const flowerHead = new THREE.Mesh(new THREE.SphereGeometry(0.32, 24, 24), new THREE.MeshStandardMaterial({ color: 0xbf5eff, emissive: 0x8822aa, emissiveIntensity: 0.4 }));
+            flowerHead.position.set(pos.x, 0.35, pos.z);
+            flowerHead.userData = { type: 'flower', index: idx, message: flowerMessages[idx] };
+            scene.add(flowerHead);
+            
+            const div = document.createElement('div');
+            div.textContent = `${flowerPositions[idx].name} 💜`;
+            div.style.backgroundColor = 'rgba(80,20,90,0.85)';
+            div.style.backdropFilter = 'blur(8px)';
+            div.style.borderRadius = '40px';
+            div.style.padding = '6px 14px';
+            div.style.border = '2px solid #d98eff';
+            div.style.fontSize = '0.7rem';
+            div.style.fontWeight = 'bold';
+            div.style.color = '#ffe2ff';
+            div.style.fontFamily = 'monospace';
+            div.style.cursor = 'pointer';
+            div.style.pointerEvents = 'auto';
+            const label = new CSS2DObject(div);
+            label.position.set(pos.x, 0.85, pos.z);
+            scene.add(label);
+            
+            flowers.push({
+                mesh: flowerHead,
+                label: label,
+                discovered: false,
+                message: flowerMessages[idx],
+                index: idx
+            });
+        });
+        
+        // ========= 5 ANIMALS =========
         const animalNames = ["🦊 ZORRO ETERNO", "🐇 CONEJO DEL AMOR", "🦌 CIERVO SAGRADO", "🐿️ ARDILLA DULCE", "🦔 ERIZO DE LUZ"];
         const animalMessages = [
             "🦊 AHMAD → RYOKO 🦊\n\nEste zorro travieso lleva mi mensaje: te seguiría a cualquier galaxia, Ryoko. No importa la distancia, no importa el peligro. Eres mi estrella favorita, mi faro en la oscuridad. Cada vez que te veo volar, mi corazón late más fuerte. Quédate conmigo, guerrera. Prometo hacerte reír cada día. 💕",
@@ -269,132 +297,69 @@
             
             "🐿️ AHMAD → RYOKO 🐿️\n\nRyoko, mi corazón brinca como esta ardilla cada vez que sonríes. No importa si estás enojada, feliz, o flotando en el espacio vacío. Siempre, siempre pienso en ti. Eres mi primer pensamiento al despertar y mi último suspiro antes de dormir. Te quiero, guerrera. Con locura. 💗",
             
-            "🦔 AHMAD → RYOKO 🦔\n\nAunque este erizo tenga espinas, Ahmad abraza a Ryoko sin miedo. Porque sé que detrás de tu armadura de guerrera hay un corazón gigante que late con fuerza. No tengas miedo de mostrarte suave conmigo. Yo voy a cuidar cada pedazo de ti, incluso los que crees rotos. Tú eres mi hogar, Ryoko. Siempre. 🖤"
+            "🦔 AHMAD → RYOKO 🦔\n\nAunque este erizo tenga espinas, Ahmad abraza a Ryoko sin miedo. Porque sé que detrás de tu armadura de guerrera hay un corazón gigante que late con fuerza. No tengas miedo de mostrarte suave conmigo. Yo voy a cuidar cada pedazo de ti. Tú eres mi hogar, Ryoko. Siempre. 🖤"
         ];
         
-        // store animal objects
-        const animals = [];
         const animalStartPos = [
-            { x: -3.2, z: -2.5, color: 0xcc8844 },
-            { x: 3.8, z: -1.5, color: 0xddbb99 },
-            { x: 2.5, z: 3.5, color: 0xaa8866 },
-            { x: -2.0, z: 3.8, color: 0xbb9966 },
-            { x: 0.5, z: -4.0, color: 0xaa7755 }
+            { x: -3.0, z: -2.2, color: 0xcc8844 },
+            { x: 3.5, z: -1.0, color: 0xddbb99 },
+            { x: 2.2, z: 3.2, color: 0xaa8866 },
+            { x: -2.2, z: 3.5, color: 0xbb9966 },
+            { x: 0.3, z: -3.5, color: 0xaa7755 }
         ];
         
-        function createAnimal(typeIndex, startX, startZ, color) {
+        const animals = [];
+        
+        animalStartPos.forEach((pos, idx) => {
             const group = new THREE.Group();
-            const bodyGeo = new THREE.SphereGeometry(0.38, 24, 24);
-            const bodyMat = new THREE.MeshStandardMaterial({ color: color, emissive: 0x442200, emissiveIntensity: 0.1 });
-            const body = new THREE.Mesh(bodyGeo, bodyMat);
+            const body = new THREE.Mesh(new THREE.SphereGeometry(0.38, 24, 24), new THREE.MeshStandardMaterial({ color: pos.color }));
             body.castShadow = true;
             group.add(body);
-            const headGeo = new THREE.SphereGeometry(0.3, 24, 24);
-            const head = new THREE.Mesh(headGeo, bodyMat);
-            head.position.set(0.48, 0.2, 0);
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.3, 24, 24), new THREE.MeshStandardMaterial({ color: pos.color }));
+            head.position.set(0.48, 0.15, 0);
             group.add(head);
-            const earGeo = new THREE.ConeGeometry(0.18, 0.3, 8);
-            const earMat = new THREE.MeshStandardMaterial({ color: color });
-            const earL = new THREE.Mesh(earGeo, earMat);
-            earL.position.set(-0.2, 0.48, 0);
-            const earR = new THREE.Mesh(earGeo, earMat);
-            earR.position.set(0.2, 0.48, 0);
+            const earL = new THREE.Mesh(new THREE.ConeGeometry(0.18, 0.3, 8), new THREE.MeshStandardMaterial({ color: pos.color }));
+            earL.position.set(-0.2, 0.45, 0);
+            const earR = new THREE.Mesh(new THREE.ConeGeometry(0.18, 0.3, 8), new THREE.MeshStandardMaterial({ color: pos.color }));
+            earR.position.set(0.2, 0.45, 0);
             head.add(earL);
             head.add(earR);
-            group.position.set(startX, 0.1, startZ);
+            group.position.set(pos.x, 0.05, pos.z);
+            group.userData = { type: 'animal', index: idx, message: animalMessages[idx] };
             scene.add(group);
             
-            // CLICKABLE HIT AREA (invisible sphere bigger than animal)
-            const hitArea = new THREE.Mesh(new THREE.SphereGeometry(0.7, 8, 8), new THREE.MeshStandardMaterial({ color: 0xff00ff, transparent: true, opacity: 0 }));
-            hitArea.userData = { isAnimal: true, index: typeIndex };
-            hitArea.position.set(startX, 0.4, startZ);
-            scene.add(hitArea);
-            
-            // CSS2D label
             const div = document.createElement('div');
+            div.textContent = `${animalNames[idx]} ✨`;
             div.style.backgroundColor = 'rgba(60,20,50,0.85)';
             div.style.backdropFilter = 'blur(8px)';
             div.style.borderRadius = '40px';
             div.style.padding = '6px 14px';
-            div.style.border = `2px solid #ffaa88`;
+            div.style.border = '2px solid #ffaa88';
             div.style.fontSize = '0.7rem';
             div.style.fontWeight = 'bold';
             div.style.color = '#ffddf4';
             div.style.fontFamily = 'monospace';
-            div.style.pointerEvents = 'auto';
             div.style.cursor = 'pointer';
-            div.innerHTML = `${animalNames[typeIndex]} ✨`;
-            div.style.textAlign = 'center';
-            const labelObj = new CSS2DObject(div);
-            labelObj.position.set(startX, 0.85, startZ);
-            scene.add(labelObj);
+            div.style.pointerEvents = 'auto';
+            const label = new CSS2DObject(div);
+            label.position.set(pos.x, 0.85, pos.z);
+            scene.add(label);
             
-            return {
+            animals.push({
                 group: group,
-                hitArea: hitArea,
-                label: labelObj,
+                label: label,
+                discovered: false,
+                message: animalMessages[idx],
+                index: idx,
+                centerX: pos.x,
+                centerZ: pos.z,
                 angle: Math.random() * Math.PI * 2,
-                radius: 1.6,
-                speed: 0.007 + Math.random() * 0.005,
-                centerX: startX,
-                centerZ: startZ,
-                discovered: false,
-                message: animalMessages[typeIndex],
-                name: animalNames[typeIndex]
-            };
-        }
-        
-        for (let i = 0; i < 5; i++) {
-            const anim = createAnimal(i, animalStartPos[i].x, animalStartPos[i].z, animalStartPos[i].color);
-            animals.push(anim);
-        }
-        
-        // create flowers with hit areas
-        const flowers = [];
-        flowerPositions.forEach((pos, idx) => {
-            const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.12, 0.5, 6), new THREE.MeshStandardMaterial({ color: 0x5c9e3a }));
-            stem.position.set(pos.x, 0.1, pos.z);
-            scene.add(stem);
-            
-            const flowerHead = new THREE.Mesh(new THREE.SphereGeometry(0.32, 24, 24), new THREE.MeshStandardMaterial({ color: 0xbf5eff, emissive: 0x8822aa, emissiveIntensity: 0.4 }));
-            flowerHead.position.set(pos.x, 0.5, pos.z);
-            scene.add(flowerHead);
-            
-            // clickable hit area for flower
-            const hitArea = new THREE.Mesh(new THREE.SphereGeometry(0.55, 8, 8), new THREE.MeshStandardMaterial({ color: 0xff00ff, transparent: true, opacity: 0 }));
-            hitArea.position.set(pos.x, 0.5, pos.z);
-            hitArea.userData = { isFlower: true, index: idx };
-            scene.add(hitArea);
-            
-            const div = document.createElement('div');
-            div.style.backgroundColor = 'rgba(80,20,90,0.85)';
-            div.style.backdropFilter = 'blur(8px)';
-            div.style.borderRadius = '40px';
-            div.style.padding = '6px 14px';
-            div.style.border = `2px solid #d98eff`;
-            div.style.fontSize = '0.7rem';
-            div.style.fontWeight = 'bold';
-            div.style.color = '#ffe2ff';
-            div.style.fontFamily = 'monospace';
-            div.style.pointerEvents = 'auto';
-            div.style.cursor = 'pointer';
-            div.innerHTML = `${flowerPositions[idx].name} 💜`;
-            div.style.textAlign = 'center';
-            const labelObj = new CSS2DObject(div);
-            labelObj.position.set(pos.x, 0.95, pos.z);
-            scene.add(labelObj);
-            
-            flowers.push({
-                mesh: flowerHead,
-                hitArea: hitArea,
-                label: labelObj,
-                discovered: false,
-                message: flowerMessages[idx],
-                name: flowerPositions[idx].name
+                radius: 1.5,
+                speed: 0.006 + Math.random() * 0.005
             });
         });
         
-        // tracking
+        // --- tracking ---
         let flowersFound = 0;
         let animalsFound = 0;
         let poemShown = false;
@@ -428,7 +393,7 @@ tú eres mi única, mi gran estrella.
 ✨✨✨✨✨✨✨✨✨✨✨✨✨
         `;
         
-        function updateCounterUI() {
+        function updateCounter() {
             const counterDiv = document.getElementById('progressCounter');
             if (counterDiv) {
                 if (!poemShown) {
@@ -439,186 +404,164 @@ tú eres mi única, mi gran estrella.
             }
         }
         
-        function showMessage(msg, isSpecial = false) {
+        function showMessage(msg) {
             const msgBox = document.getElementById('romanticMessage');
-            if (!msgBox) return;
-            msgBox.innerHTML = msg;
-            if (isSpecial) {
-                msgBox.style.borderLeftColor = '#ff44dd';
-                msgBox.style.backgroundColor = '#2a0a30dd';
-            } else {
-                msgBox.style.borderLeftColor = '#ff88dd';
-            }
-            msgBox.scrollTop = 0;
-            const panel = document.getElementById('uiPanel');
-            if (panel) {
-                panel.style.transform = 'scale(1.01)';
-                setTimeout(() => { if(panel) panel.style.transform = ''; }, 150);
+            if (msgBox) {
+                msgBox.innerHTML = msg;
+                msgBox.scrollTop = 0;
             }
         }
         
         function showPoem() {
             if (poemShown) return;
             poemShown = true;
-            showMessage(`💖💖💖 ¡RYOKO, GUERRERA! HAS DESPERTADO LA MAGIA COMPLETA DEL PARQUE 💖💖💖\n\n${finalPoem}\n\n🌹 Ahmad escribió cada verso mirando las flores y pensando en tu fuerza. Eres imparable, mi amor. 🌹`, true);
-            for (let i = 0; i < 80; i++) {
-                const heartParticle = new THREE.Mesh(new THREE.SphereGeometry(0.08, 6, 6), new THREE.MeshStandardMaterial({ color: 0xff66aa, emissive: 0xff2288 }));
-                heartParticle.position.set((Math.random() - 0.5) * 14, Math.random() * 5, (Math.random() - 0.5) * 14);
-                scene.add(heartParticle);
-                setTimeout(() => scene.remove(heartParticle), 2500);
-            }
-            updateCounterUI();
+            showMessage(`💖💖💖 ¡RYOKO, GUERRERA! HAS DESPERTADO LA MAGIA COMPLETA DEL PARQUE 💖💖💖\n\n${finalPoem}\n\n🌹 Ahmad escribió cada verso pensando en tu fuerza. Eres imparable, mi amor. 🌹`);
+            updateCounter();
         }
         
         function checkCompletion() {
             if (flowersFound === 5 && animalsFound === 5 && !poemShown) {
-                setTimeout(() => showPoem(), 400);
+                setTimeout(() => showPoem(), 300);
             }
         }
         
-        // RAYCASTER for clicks
+        // --- RAYCASTER for clicks ---
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2();
         
-        function onCanvasClick(event) {
-            if (poemShown) {
-                showMessage("💗 El poema ya florece en tu corazón, Ryoko. Ahmad lo escribió solo para ti. Reinicia el parque si quieres revivir la magia. 💗", false);
-                return;
-            }
+        function onClick(event) {
+            if (poemShown) return;
+            
             const rect = renderer.domElement.getBoundingClientRect();
             const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
             const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
             mouse.set(x, y);
             raycaster.setFromCamera(mouse, camera);
             
-            const allHitAreas = [...flowers.map(f => f.hitArea), ...animals.map(a => a.hitArea)];
-            const intersects = raycaster.intersectObjects(allHitAreas);
+            const clickableFlowers = flowers.map(f => f.mesh);
+            const clickableAnimals = animals.map(a => a.group);
+            const allClickable = [...clickableFlowers, ...clickableAnimals];
+            const intersects = raycaster.intersectObjects(allClickable);
             
             if (intersects.length > 0) {
                 const hit = intersects[0].object;
-                if (hit.userData.isFlower) {
-                    const flower = flowers[hit.userData.index];
-                    if (flower && !flower.discovered) {
-                        flower.discovered = true;
-                        flowersFound++;
-                        flower.mesh.material.emissiveIntensity = 0.9;
-                        const ringGeo = new THREE.TorusGeometry(0.42, 0.05, 16, 40);
-                        const ringMat = new THREE.MeshStandardMaterial({ color: 0xff88ff });
-                        const ring = new THREE.Mesh(ringGeo, ringMat);
-                        flower.mesh.add(ring);
-                        flower.label.element.style.backgroundColor = '#ff99ffaa';
-                        flower.label.element.style.border = '3px solid #ffccff';
-                        showMessage(`💜 ¡FLOR ENCONTRADA! ${flower.message} 💜`, false);
-                        updateCounterUI();
-                        checkCompletion();
-                    } else if (flower && flower.discovered) {
-                        showMessage(`🌸 Esta flor ya entregó su mensaje, Ryoko. Pero su aroma recuerda que Ahmad te ama profundamente. 🌸`, false);
-                    }
+                
+                // Check flower
+                const flowerHit = flowers.find(f => f.mesh === hit);
+                if (flowerHit && !flowerHit.discovered) {
+                    flowerHit.discovered = true;
+                    flowersFound++;
+                    flowerHit.mesh.material.emissiveIntensity = 0.9;
+                    flowerHit.label.element.style.backgroundColor = '#ff99ffaa';
+                    flowerHit.label.element.style.border = '3px solid #ffccff';
+                    showMessage(`💜 ¡FLOR ENCONTRADA! ${flowerHit.message} 💜`);
+                    updateCounter();
+                    checkCompletion();
+                    return;
                 }
-                else if (hit.userData.isAnimal) {
-                    const animal = animals[hit.userData.index];
-                    if (animal && !animal.discovered) {
-                        animal.discovered = true;
-                        animalsFound++;
-                        const collarGeo = new THREE.TorusGeometry(0.55, 0.07, 16, 40);
-                        const collarMat = new THREE.MeshStandardMaterial({ color: 0xffaa88, emissive: 0xff6688 });
-                        const collar = new THREE.Mesh(collarGeo, collarMat);
-                        animal.group.add(collar);
-                        animal.label.element.style.backgroundColor = '#ffaa88aa';
-                        animal.label.element.style.border = '3px solid #ffccaa';
-                        showMessage(`🦊 ¡ANIMAL ENCONTRADO! ${animal.message} 🦊`, false);
-                        updateCounterUI();
-                        checkCompletion();
-                    } else if (animal && animal.discovered) {
-                        showMessage(`✨ Este animal ya te dio su mensaje, guerrera. Sigue explorando el parque del amor. ✨`, false);
-                    }
+                
+                // Check animal
+                const animalHit = animals.find(a => a.group === hit);
+                if (animalHit && !animalHit.discovered) {
+                    animalHit.discovered = true;
+                    animalsFound++;
+                    animalHit.label.element.style.backgroundColor = '#ffaa88aa';
+                    animalHit.label.element.style.border = '3px solid #ffccaa';
+                    showMessage(`🦊 ¡ANIMAL ENCONTRADO! ${animalHit.message} 🦊`);
+                    updateCounter();
+                    checkCompletion();
+                    return;
+                }
+                
+                if (flowerHit && flowerHit.discovered) {
+                    showMessage(`🌸 Esta flor ya entregó su mensaje, Ryoko. Pero su aroma recuerda que Ahmad te ama profundamente. 🌸`);
+                } else if (animalHit && animalHit.discovered) {
+                    showMessage(`✨ Este animal ya te dio su mensaje, guerrera. Sigue explorando el parque del amor. ✨`);
                 }
             }
         }
         
-        window.addEventListener('click', onCanvasClick, false);
+        window.addEventListener('click', onClick, false);
         window.addEventListener('touchstart', (e) => {
             if (e.touches.length) {
                 const touch = e.touches[0];
-                const fakeEvent = { clientX: touch.clientX, clientY: touch.clientY };
-                onCanvasClick(fakeEvent);
+                onClick(touch);
                 e.preventDefault();
             }
         });
         
-        // animate animals walking
+        // --- animate animals walking ---
         function animateAnimals() {
             animals.forEach(animal => {
                 if (!animal.discovered) {
                     animal.angle += animal.speed;
-                    const offsetX = Math.cos(animal.angle) * animal.radius;
-                    const offsetZ = Math.sin(animal.angle) * animal.radius;
-                    const newX = animal.centerX + offsetX;
-                    const newZ = animal.centerZ + offsetZ;
+                    const newX = animal.centerX + Math.cos(animal.angle) * animal.radius;
+                    const newZ = animal.centerZ + Math.sin(animal.angle) * animal.radius;
                     animal.group.position.x = newX;
                     animal.group.position.z = newZ;
-                    animal.hitArea.position.x = newX;
-                    animal.hitArea.position.z = newZ;
                     animal.label.position.x = newX;
                     animal.label.position.z = newZ;
-                    const angleDir = Math.atan2(offsetZ, offsetX);
-                    animal.group.rotation.y = angleDir;
-                } else {
-                    animal.group.position.y = 0.1 + Math.sin(Date.now() * 0.005) * 0.02;
                 }
             });
         }
         
-        // floating particles
-        const particleCount = 800;
+        // --- floating particles ---
         const particlePositions = [];
-        for (let i = 0; i < particleCount; i++) {
+        for (let i = 0; i < 600; i++) {
             particlePositions.push((Math.random() - 0.5) * 22);
             particlePositions.push(Math.random() * 4);
             particlePositions.push((Math.random() - 0.5) * 20);
         }
-        const particleBufferGeo = new THREE.BufferGeometry();
-        particleBufferGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(particlePositions), 3));
-        const fairyDust = new THREE.Points(particleBufferGeo, new THREE.PointsMaterial({ color: 0xffaacc, size: 0.06, transparent: true }));
+        const particleGeo = new THREE.BufferGeometry();
+        particleGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(particlePositions), 3));
+        const fairyDust = new THREE.Points(particleGeo, new THREE.PointsMaterial({ color: 0xffaacc, size: 0.06, transparent: true }));
         scene.add(fairyDust);
         
+        // --- animation loop ---
         function animate() {
             requestAnimationFrame(animate);
             animateAnimals();
             fairyDust.rotation.y += 0.002;
-            starsField.rotation.y += 0.0003;
+            stars.rotation.y += 0.0003;
             controls.update();
             renderer.render(scene, camera);
             labelRenderer.render(scene, camera);
         }
         animate();
         
-        // reset
+        // --- reset button ---
         document.getElementById('resetBtn').addEventListener('click', () => {
             flowersFound = 0;
             animalsFound = 0;
             poemShown = false;
+            
             flowers.forEach(flower => {
                 flower.discovered = false;
                 flower.mesh.material.emissiveIntensity = 0.4;
-                const children = flower.mesh.children;
-                for (let i = children.length-1; i >= 0; i--) {
-                    if (children[i].isTorus) flower.mesh.remove(children[i]);
-                }
                 flower.label.element.style.backgroundColor = 'rgba(80,20,90,0.85)';
                 flower.label.element.style.border = '2px solid #d98eff';
             });
+            
             animals.forEach(animal => {
                 animal.discovered = false;
-                const children = animal.group.children;
-                for (let i = children.length-1; i >= 0; i--) {
-                    if (children[i].isTorus) animal.group.remove(children[i]);
-                }
                 animal.label.element.style.backgroundColor = 'rgba(60,20,50,0.85)';
                 animal.label.element.style.border = '2px solid #ffaa88';
                 animal.group.position.x = animal.centerX;
                 animal.group.position.z = animal.centerZ;
-                animal.hitArea.position.x = animal.centerX;
-                animal.hitArea.position.z = animal.centerZ;
                 animal.label.position.x = animal.centerX;
-                animal.label.position
+                animal.label.position.z = animal.centerZ;
+                animal.angle = Math.random() * Math.PI * 2;
+            });
+            
+            updateCounter();
+            showMessage("✨ El parque renació. Las flores y animales tienen nuevos mensajes de Ahmad para ti, Ryoko. ¡Tócalos! 🌷🦊");
+            camera.position.set(6, 5, 10);
+            controls.target.set(0, 1.5, 0);
+            controls.update();
+        });
+        
+        updateCounter();
+        console.log('Parque 3D listo! Toca las flores moradas y los animales 🎉');
+    </script>
+</body>
+</html>
